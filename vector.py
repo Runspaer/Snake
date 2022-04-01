@@ -1,5 +1,5 @@
 import numpy as np
-print('heelo world')
+print('heelo Oleg')
 
 class Point:
     def __init__(self,x,y):
