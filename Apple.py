@@ -2,6 +2,7 @@ import pygame
 from obj import Circle
 from random import randrange
 from Point import Point
+import numpy as np
 class Apple(Circle):
     def __init__(self, coord: Point, vel: Point, color, r: int):
         super().__init__(coord,vel, color,r)
