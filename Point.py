@@ -1,6 +1,3 @@
-import numpy as np
-print('heelo world')
-
 class Point:
     def __init__(self,x,y):
         self.x=x

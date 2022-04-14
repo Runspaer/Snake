@@ -5,7 +5,7 @@ class UI:
         pygame.init()
         # Параметры окна
         self.screen = pygame.display.set_mode(self.screen_size)
-        pygame.display.set_caption("Змiй")
+        pygame.display.set_caption("Змейка")
     def draw(self,obj: list):
         pygame.time.delay(20)
         self.screen.fill((0, 0, 0))
