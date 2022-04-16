@@ -18,7 +18,7 @@ class Obj:
     def find_furthest_point(self, direction:Point):
         pointers=self.search_points()
         max_point = Point(0,0)
-        max_r = -100000000000000000000
+        max_r = -10000000000000000000
         for i in pointers:
             if i * direction > max_r:
                 max_r = i * direction
@@ -35,6 +35,9 @@ class Obj:
         direction = Point(-1, 0)
         while direction:
             support = self.support(B, direction)
+            # print(direction.x, direction.y)
+            # print(support.x,support.y)
+            # print()
             if support * direction <= 0:
                 return False
             simplex.push_back(support)
@@ -47,12 +50,16 @@ class Circle(Obj):
         self.r=r
     def draw(self,screen):
         pygame.draw.circle(screen, self.color, (self.coord.x,self.coord.y),self.r)
-    def search_points(self):# находит все вершины фигуры
-        pointers=[]
-        r=256
-        for i in range(r):
-            pointers.append(self.coord+Point(self.r*m.cos(m.radians(360/r*i)),self.r*m.sin(m.radians(360/r*i))))
-        return pointers
+    def find_furthest_point(self, direction:Point):
+        angle=m.atan2(direction.y, direction.x)
+        return Point(self.coord.x + (self.r * m.cos(angle)),self.coord.y + (self.r * m.sin(angle)))
+    # def search_points(self):# находит все вершины фигуры
+    #
+    #     pointers=[]
+    #     r=256
+    #     for i in range(r):
+    #         pointers.append(self.coord+Point(self.r*m.cos(m.radians(360/r*i)),self.r*m.sin(m.radians(360/r*i))))
+    #     return pointers
 
 
 class Size_wall(Obj):
