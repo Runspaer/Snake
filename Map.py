@@ -7,7 +7,8 @@ class Map:
     def tick(self):
         for i in range(len(self.objs)):
             self.objs[i].tick()
-    #def collision(self,screen_size):
-    #    a=self.obj[1].collision(self.obj[0].vec[0],screen_size)
-    #    if a==0:
-    #        self.obj[0].eat()
+    def collision(self):
+        for i in range(len(self.objs)):
+            for j in range(i+1,len(self.objs)):
+                if self.objs[i].collision(self.objs[j]):
+                    ura

@@ -5,7 +5,6 @@ class Snake(Circle):
     def __init__(self,coord:Point,vel:Point,color,r:int,tail:list):
         super().__init__(coord,vel,color,r)
         self.tail=tail#Circle
-
     def tick(self):
         # for i in range(1,len(self.tail)):
         #     self.tail[-i].glv=self.tail[-i-1].glv.copy()
@@ -21,6 +20,5 @@ class Snake(Circle):
 
         if keys[pygame.K_LEFT]:
             self.vel.x,self.vel.y = np.dot(np.array([[m.cos(m.radians(5)),m.sin(m.radians(5))], [-m.sin(m.radians(5)), m.cos(m.radians(5))]],float),np.array([self.vel.x,self.vel.y],float))
-
         self.coord.x += self.vel.x
         self.coord.y += self.vel.y
