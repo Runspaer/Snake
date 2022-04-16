@@ -53,27 +53,18 @@ class Circle(Obj):
     def find_furthest_point(self, direction:Point):
         angle=m.atan2(direction.y, direction.x)
         return Point(self.coord.x + (self.r * m.cos(angle)),self.coord.y + (self.r * m.sin(angle)))
-    # def search_points(self):# находит все вершины фигуры
-    #
-    #     pointers=[]
-    #     r=256
-    #     for i in range(r):
-    #         pointers.append(self.coord+Point(self.r*m.cos(m.radians(360/r*i)),self.r*m.sin(m.radians(360/r*i))))
-    #     return pointers
 
 
 class Size_wall(Obj):
-    def __init__(self,coord:Point,vel:Point,color,h:int):
+    def __init__(self,coord:Point,vel:Point,color,w:int,h:int,sight:Point):
         super().__init__(coord,vel, color)
+        self.w=w
         self.h=h
+        self.sight=sight#Обозначает сдвиг изображения
     def draw(self, screen):
-        pygame.draw.line(screen, self.color, (self.coord.x, self.coord.y+self.h),(self.coord.x, self.coord.y -self.h), 1)
+        pygame.draw.line(screen, self.color, (self.coord.x+self.w-self.sight.x, self.coord.y+self.h-self.sight.y),(self.coord.x-self.w-self.sight.x, self.coord.y -self.h-self.sight.y), 1)
     def search_points(self):# находит все вершины фигуры
-        return [self.coord+Point(0,self.h),self.coord-Point(0,self.h)]
-
-#    pygame.draw.line(screen,self.color,(self.coord.x,self.coord.y),(self.vec.glv[0]+self.vec.size[0],self.vec.glv[1]+self.vec.size[1]),10)
-    #def draw(self, screen):
-    #    pygame.draw.line(screen,self.color,(self.coord.x,self.coord.y),(self.vec.glv[0]+self.vec.size[0],self.vec.glv[1]+self.vec.size[1]),10)
+        return [self.coord+Point(self.w,self.h),self.coord-Point(self.w,self.h)]
 
 #class Wall(Obj):
 #    def draw(self,screen):
