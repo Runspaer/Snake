@@ -9,6 +9,15 @@ class Obj:
         pass
     def draw(self,screen):
         pass
+    #def FindFurthestPoint(pointers: list, r):
+    #    pass
+        # max_point = 0
+        # max_r = 0
+        # for i in pointers:
+        #     if i * r > max_r:
+        #         max_r = i * r
+        #         max_point = i
+        # return max_point
 
 class Circle(Obj):
     def __init__(self,coord:Point,vel:Point,color,r:int):
