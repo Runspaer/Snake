@@ -1,6 +1,6 @@
-from Point import *
 import pygame
 from Simplex import *
+import math as m
 class Obj:
     def __init__(self,coord:Point,vel:Point,color):
         self.coord = coord
@@ -17,7 +17,7 @@ class Obj:
 
     def find_furthest_point(self, direction:Point):
         pointers=self.search_points()
-        max_point = 0
+        max_point = Point(0,0)
         max_r = -100000000000000000000
         for i in pointers:
             if i * direction > max_r:
@@ -31,7 +31,8 @@ class Obj:
     def GJK(self,B):
         support = self.support(B,Point(1,0))# r a b # a b r
         simplex=Simplex([support])
-        direction = Point(-support.x, -support.y)
+        #direction = Point(-support.x, -support.y)
+        direction = Point(-1, 0)
         while direction:
             support = self.support(B, direction)
             if support * direction <= 0:
@@ -47,7 +48,25 @@ class Circle(Obj):
     def draw(self,screen):
         pygame.draw.circle(screen, self.color, (self.coord.x,self.coord.y),self.r)
     def search_points(self):# находит все вершины фигуры
-        return [self.coord+Point(0,self.r),self.coord-Point(0,self.r),self.coord+Point(self.r,0),self.coord-Point(self.r,0)]
+        pointers=[]
+        r=256
+        for i in range(r):
+            pointers.append(self.coord+Point(self.r*m.cos(m.radians(360/r*i)),self.r*m.sin(m.radians(360/r*i))))
+        return pointers
+
+
+class Size_wall(Obj):
+    def __init__(self,coord:Point,vel:Point,color,h:int):
+        super().__init__(coord,vel, color)
+        self.h=h
+    def draw(self, screen):
+        pygame.draw.line(screen, self.color, (self.coord.x, self.coord.y+self.h),(self.coord.x, self.coord.y -self.h), 1)
+    def search_points(self):# находит все вершины фигуры
+        return [self.coord+Point(0,self.h),self.coord-Point(0,self.h)]
+
+#    pygame.draw.line(screen,self.color,(self.coord.x,self.coord.y),(self.vec.glv[0]+self.vec.size[0],self.vec.glv[1]+self.vec.size[1]),10)
+    #def draw(self, screen):
+    #    pygame.draw.line(screen,self.color,(self.coord.x,self.coord.y),(self.vec.glv[0]+self.vec.size[0],self.vec.glv[1]+self.vec.size[1]),10)
 
 #class Wall(Obj):
 #    def draw(self,screen):

@@ -1,4 +1,4 @@
-from obj import *
+from Obj import *
 import numpy as np
 import math as m
 class Snake(Circle):

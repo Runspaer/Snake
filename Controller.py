@@ -1,14 +1,19 @@
 from UI import *
 from Engine import *
+from Include_me import include_objs
+
+
 class Controller:
     def __init__(self):
-        screen_size=[500,500]
-        self.ui=UI(screen_size)
-        self.engine=Engine(screen_size,Map([Snake(Point(screen_size[0]//2,screen_size[1]//2),Point(1,1),'green',10,[]),Apple(Point(20,20),Point(0,0),'red',5)]))
+        screen_size = [500, 500]
+        self.ui = UI(screen_size)
+        objs = include_objs(screen_size)
+        self.engine = Engine(screen_size, Map(objs))
 
         self.start_game()
+
     def start_game(self):
-        runGame=True
+        runGame = True
         while runGame:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: runGame = False

@@ -3,7 +3,10 @@ class Simplex:
     def __init__(self, l:list):
         self.l=l
 
-    def CalculateDirection(self):  # self по факту мусор, так что эту функцию надо поместить где-нибудь повыше, можно даже в enjune
+    def CalculateDirection(self):
+        #for i in range(len(self.l)):
+        #    print(self.l[i].x,self.l[i].y)
+        #print()
         a = self.l[-1]
         ao = Point(-a.x, -a.y)
         if len(self.l) == 3:  # Треугольник
