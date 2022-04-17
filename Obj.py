@@ -14,7 +14,8 @@ class Obj:
         pass
     def collision(self,other):
         return self.GJK(other)
-
+    def reaction(self,other):
+        pass
     def find_furthest_point(self, direction:Point):
         pointers=self.search_points()
         max_point = Point(0,0)
@@ -53,6 +54,8 @@ class Circle(Obj):
     def find_furthest_point(self, direction:Point):
         angle=m.atan2(direction.y, direction.x)
         return Point(self.coord.x + (self.r * m.cos(angle)),self.coord.y + (self.r * m.sin(angle)))
+    def copy(self):
+        return Circle(self.coord,self.vel,self.color,self.r)
 
 
 class Size_wall(Obj):
