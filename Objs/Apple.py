@@ -1,5 +1,5 @@
-from Obj import Circle
-from Point import Point
+from Objs.Obj import Circle
+from Objs.Plane.Point import Point
 from random import randrange
 
 

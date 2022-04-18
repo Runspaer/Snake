@@ -1,4 +1,4 @@
-from Point import *
+from Objs.Plane.Point import *
 class Simplex:
     def __init__(self, l:list):
         self.l=l

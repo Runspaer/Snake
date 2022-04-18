@@ -1,6 +1,6 @@
-from UI import *
+from Visual.UI import *
 from Engine import *
-from Include_me import include_objs
+from Visual.Include_me import include_objs
 
 
 class Controller:

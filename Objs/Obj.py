@@ -1,5 +1,5 @@
 import pygame
-from Simplex import *
+from Objs.Plane.Simplex import *
 import math as m
 class Obj:
     def __init__(self,coord:Point,vel:Point,color):

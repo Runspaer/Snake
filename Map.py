@@ -1,6 +1,5 @@
-import time
-from Snake import *
-from Apple import *
+from Objs.Snake import *
+from Objs.Apple import *
 class Map:
     def __init__(self,objs):
         self.objs=objs
