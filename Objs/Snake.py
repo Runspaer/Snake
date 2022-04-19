@@ -9,6 +9,9 @@ class Snake(Circle):
         self.tail=tail#Circle
         self.head=pygame.image.load('Visual/Head.png')
         self.head = pygame.transform.scale(self.head, (self.r * 2,self.r * 2))  # Только столкновение по диагонали выглядит криво, так как объект состоит из пикселей и не является идеальным кругом
+        self.body = pygame.image.load('Visual/Body.png')
+        self.body = pygame.transform.scale(self.body, (self.r * 2,
+                                                       self.r * 2))  # Только столкновение по диагонали выглядит криво, так как объект состоит из пикселей и не является идеальным кругом
     def tick(self):
         for i in range(1,len(self.tail)):
             self.tail[-i]=self.tail[-i-1].copy()
@@ -28,6 +31,8 @@ class Snake(Circle):
         else:
             self.tail.append(Circle(Point(self.tail[-1].coord.x - self.tail[-1].vel.x, self.tail[-1].coord.y - self.tail[-1].vel.y), self.tail[-1].vel, 'green', self.tail[-1].r))
     def draw(self,screen):
+        for i in self.tail:
+            screen.blit(self.body, self.body.get_rect(center=(i.coord.x,i.coord.y)))
         if self.vel.y<=0:# так как у нас ось Y располагается сверху вниз
             head = pygame.transform.rotate(self.head,m.degrees(m.acos(self.vel.x/self.vel.ro(Point(0,0)))))
         else:
@@ -35,8 +40,7 @@ class Snake(Circle):
         #self.head=pygame.transform.rotate(self.head,m.acos(self.vel*Point(1,0)/(self.coord.ro(Point(0,0)))))
         circle = head.get_rect(center=(self.coord.x,self.coord.y))
         screen.blit(head,circle)
-        for i in self.tail:
-            #screen.blit(head, self.head.get_rect(center=(i.coord.x,i.coord.y)))
-            pygame.draw.circle(screen, i.color, (i.coord.x, i.coord.y), i.r)
+
+            #pygame.draw.circle(screen, i.color, (i.coord.x, i.coord.y), i.r)
     #def reaction(self,other):
         #if type(other)
