@@ -1,5 +1,6 @@
 from Objs.Snake import *
 from Objs.Apple import *
+import time
 class Map:
     def __init__(self,objs):
         self.objs=objs
@@ -10,6 +11,9 @@ class Map:
         for i in range(len(self.objs)):
             for j in range(i+1,len(self.objs)):
                 if self.objs[i].collision(self.objs[j]):
-                    if type(self.objs[i])==Snake and type(self.objs[j])==Apple:
-                        self.objs[i].eat()
+                    if (type(self.objs[i])==Snake or type(self.objs[j])==Snake) and(type(self.objs[i])==Apple or type(self.objs[j])==Apple):
+                        self.objs[i].eat(screen_size)
                         self.objs[j].eat(screen_size)
+                    else:
+                        self.objs[i].clash(self.objs[j])
+                        self.objs[j].clash(self.objs[i])

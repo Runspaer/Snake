@@ -6,6 +6,8 @@ class Obj:
         self.coord = coord
         self.vel = vel
         self.color=color
+    def give_clash_norm(self):
+        pass
     def tick(self):
         pass
     def draw(self,screen):
@@ -14,7 +16,7 @@ class Obj:
         pass
     def collision(self,other):
         return self.GJK(other)
-    def reaction(self,other):
+    def clash(self,other):
         pass
     def find_furthest_point(self, direction:Point):
         pointers=self.search_points()
@@ -68,6 +70,8 @@ class Size_wall(Obj):
         pygame.draw.line(screen, self.color, (self.coord.x+self.w-self.sight.x, self.coord.y+self.h-self.sight.y),(self.coord.x-self.w-self.sight.x, self.coord.y -self.h-self.sight.y), 1)
     def search_points(self):# находит все вершины фигуры
         return [self.coord+Point(self.w,self.h),self.coord-Point(self.w,self.h)]
+    def give_clash_norm(self):# в будущем можно будет находить вектор, где произошло стокновение и возвращать его
+        return [(self.search_points()[0]-self.search_points()[1]).norm(),(self.search_points()[1]-self.search_points()[0]).norm()]
 
 #class Wall(Obj):
 #    def draw(self,screen):
