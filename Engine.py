@@ -5,4 +5,4 @@ class Engine:
         self.map=map
     def tick(self):
         self.map.tick()
-        #self.map.collision(self.screen_size)
+        self.map.collision(self.screen_size)
