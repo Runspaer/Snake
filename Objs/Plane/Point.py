@@ -10,7 +10,5 @@ class Point:
         return Point(self.x - other.x, self.y - other.y)
     def __add__(self, other):
         return Point(self.x + other.x, self.y + other.y)
-    def scal(self,k):
-        return Point(self.x*k,self.y*k)
     def norm(self):
         return Point(self.y, -self.x)

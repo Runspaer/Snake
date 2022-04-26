@@ -4,9 +4,6 @@ class Simplex:
         self.l=l
 
     def CalculateDirection(self):
-        #for i in range(len(self.l)):
-        #    print(self.l[i].x,self.l[i].y)
-        #print()
         a = self.l[-1]
         ao = Point(-a.x, -a.y)
         if len(self.l) == 3:  # Треугольник
