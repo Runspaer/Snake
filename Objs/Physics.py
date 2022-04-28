@@ -46,13 +46,17 @@ class Physics:
 
 
 class Physics_circle(Physics):
+    def __init__(self,center:Point,peaks,color):
+        super().__init__(Geometry_circle(center,peaks,color))
     def find_furthest_point(self, direction:Point):
         angle=m.atan2(direction.y, direction.x)
         return Point(self.geom.center.x + (self.geom.peaks[0].abs() * m.cos(angle)),self.geom.center.y + (self.geom.peaks[0].abs() * m.sin(angle)))
     def copy(self):
-        return Physics_circle(self.geom.copy())
+        return Physics_circle(self.geom.center,self.geom.peaks,self.geom.color)
 
 class Physics_polygon(Physics):#на самом деле это плоский объект, сделано для упрощения, так как в дальнейшем процесс высчитывания будет иным
+    def __init__(self,center:Point,peaks,color):
+        super().__init__(Geometry_polygon(center,peaks,color))
     def find_furthest_point(self, direction:Point):
         pointers=self.geom.give_gl_peaks()
         max_point = Point(0,0)
@@ -66,4 +70,4 @@ class Physics_polygon(Physics):#на самом деле это плоский �
         return [(self.geom.give_gl_peaks()[0]-self.geom.give_gl_peaks()[1]).norm(),(self.geom.give_gl_peaks()[1]-self.geom.give_gl_peaks()[0]).norm()]
         #пока не переделал эту часть под задание по часовой стрелке
     def copy(self):
-        return Physics_polygon(self.geom.copy())
+        return Physics_polygon(self.geom.center,self.geom.peaks,self.geom.color)
