@@ -1,6 +1,7 @@
 from Visual.UI import *
 from Engine import *
-from Visual.Include_me import include_objs
+#from Visual.Include_me import include_objs
+from Visual.include2 import *
 
 
 class Controller:
@@ -8,6 +9,7 @@ class Controller:
         screen_size = [500, 500]
         self.ui = UI(screen_size)
         objs = include_objs(screen_size)
+
         self.engine = Engine(screen_size, Map(objs))
 
         self.start_game()

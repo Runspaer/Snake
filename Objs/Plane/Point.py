@@ -12,3 +12,5 @@ class Point:
         return Point(self.x + other.x, self.y + other.y)
     def norm(self):
         return Point(self.y, -self.x)
+    def abs(self):
+        return ((self.x)**2+(self.y)**2)**0.5
