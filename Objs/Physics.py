@@ -17,27 +17,15 @@ class Physics:
         pass
     def find_furthest_point(self, direction:Point):
         pass
-        # pointers=self.search_points()
-        # max_point = Point(0,0)
-        # max_r = -10000000000000000000
-        # for i in pointers:
-        #     if i * direction > max_r:
-        #         max_r = i * direction
-        #         max_point = i
-        # return max_point
 
     def support(self, B, direction: Point):  # r A B #A B r
         return self.find_furthest_point(direction) - B.find_furthest_point(Point(-direction.x,-direction.y))#-r
     def GJK(self,B):
         support = self.support(B,Point(1,0))# r a b # a b r
         simplex=Simplex([support])
-        #direction = Point(-support.x, -support.y)
         direction = Point(-1, 0)
         while direction:
             support = self.support(B, direction)
-            # print(direction.x, direction.y)
-            # print(support.x,support.y)
-            # print()
             if support * direction <= 0:
                 return False
             simplex.push_back(support)
@@ -54,7 +42,7 @@ class Physics_circle(Physics):
     def copy(self):
         return Physics_circle(self.geom.center,self.geom.peaks,self.geom.color)
 
-class Physics_polygon(Physics):#на самом деле это плоский объект, сделано для упрощения, так как в дальнейшем процесс высчитывания будет иным
+class Physics_polygon(Physics):
     def __init__(self,center:Point,peaks,color):
         super().__init__(Geometry_polygon(center,peaks,color))
     def find_furthest_point(self, direction:Point):

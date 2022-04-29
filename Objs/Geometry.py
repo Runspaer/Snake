@@ -10,7 +10,6 @@ class Geometry:
         return [i+self.center for i in self.peaks]
     def draw(self,screen):
         pass
-        #pygame.draw.polygon(screen, self.color,[self.give_gl_peaks()])
     def copy(self):
         return Geometry(self.center,self.peaks,self.color)
 
@@ -24,7 +23,7 @@ class Geometry_circle(Geometry):
 class Geometry_polygon(Geometry):
     def draw(self, screen):
         coord=self.give_gl_peaks()
-        coord=[[coord[i].x,coord[i].y] for i in range(len(coord))]
+        coord=[[i.x,i.y] for i in coord]
         pygame.draw.polygon(screen, self.color, coord)
     def copy(self):
         return Geometry_polygon(self.center,self.peaks,self.color)

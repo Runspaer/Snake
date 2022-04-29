@@ -1,4 +1,4 @@
-from Objs.Snake_2 import *
+from Objs.Snake import *
 import numpy as np
 import math as m
 def include_objs(screen_size:list):
@@ -7,15 +7,15 @@ def include_objs(screen_size:list):
     #mass.append(Snake(Physics_circle(Geometry_circle(Point(screen_size[0]//2,screen_size[1]//2),[Point(15,0)],'green')),Point(2,0)))
     mass.append(Apple(Physics_circle(Point(50,50),[Point(10,0)],'red'),Point(0,0)))
     #cquare Snake
-    #mass.append(Snake(Physics_polygon(Geometry_polygon(Point(screen_size[0]//2,screen_size[1]//2),
-    #[Point(-3,3),Point(3,3),Point(3,-3),Point(-3,-3)],'green')),Point(2,0)))
-    a=Point(0,0)
-    b=Point(0,0)
-    a.x,a.y=np.dot(np.array([[m.cos(m.radians(120)),-m.sin(m.radians(120))],[m.sin(m.radians(120)),m.cos(m.radians(120))]],float),np.array([0,-10],float))
-    b.x,b.y=np.dot(np.array([[m.cos(m.radians(120)),m.sin(m.radians(120))], [-m.sin(m.radians(120)), m.cos(m.radians(120))]],float),np.array([0,-10],float))
-    mass.append(Snake(Physics_polygon(Point(screen_size[0] // 2, screen_size[1] // 2),
-    [Point(0, -10), a, b],'green'), Point(2, 0)))
-    #
+    # mass.append(Snake(Physics_polygon(Point(screen_size[0]//2,screen_size[1]//2),
+    # [Point(-10,10),Point(10,10),Point(10,-10),Point(-7,-7)],'green'),Point(2,0)))
+    # a=Point(0,0)
+    # # b=Point(0,0)
+    # a.x,a.y=np.dot(np.array([[m.cos(m.radians(120)),-m.sin(m.radians(120))],[m.sin(m.radians(120)),m.cos(m.radians(120))]],float),np.array([0,-10],float))
+    # b.x,b.y=np.dot(np.array([[m.cos(m.radians(120)),m.sin(m.radians(120))], [-m.sin(m.radians(120)), m.cos(m.radians(120))]],float),np.array([0,-10],float))
+    # mass.append(Snake(Physics_polygon(Point(screen_size[0] // 2, screen_size[1] // 2),
+    # [Point(0, -10), a, b],'green'), Point(2, 0)))
+    # #
     # mass.append(Snake.Snake(Point(screen_size[0]//2,screen_size[1]//2),Point(2,0),'green',15,[]))
     # mass.append(Apple.Apple(Point(50,50),Point(0,0),'red',10))
     # mass.append(Obj.Size_wall(Point(1,screen_size[1]/2),Point(0,0),'blue',0,screen_size[1]/2-1,Point(1,0)))#Левая стена
