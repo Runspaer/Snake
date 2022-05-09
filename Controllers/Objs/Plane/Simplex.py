@@ -1,4 +1,4 @@
-from Objs.Plane.Point import *
+from Controllers.Objs.Plane.Point import Point
 class Simplex:
     def __init__(self, l:list):
         self.l=l
@@ -16,14 +16,12 @@ class Simplex:
                 abPerp = Point(-abPerp.x, -abPerp.y)
             if abPerp * ao > 0:
                 self.l.pop(0)
-                #self.l = self.l#[:1]
                 return abPerp
             acPerp = Point(ac.y, -ac.x)
             if acPerp * b >= 0:
                 acPerp = Point(-acPerp.x, -abPerp.y)
             if acPerp * ao > 0:
                 self.l.pop(1)
-                #self.l = self.l[1]#[1:1]
                 return acPerp
             return False
         # Не треугольник,т.е. линия
