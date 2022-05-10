@@ -24,7 +24,6 @@ class Physics:
         self.triangle_vel=triangle_vel
     def draw(self,screen):
         self.geom.draw(screen,self.center)
-    #Надо сделать
     def tick(self,buttons=None):
         if buttons==None:
             self.vel.x, self.vel.y = np.dot(self.matpov_vel, np.array([self.vel.x, self.vel.y], float))
@@ -43,8 +42,8 @@ class Physics:
         for i in self.geom.peaks:
             i.x, i.y = np.dot(self.matpov_geom, np.array([i.x, i.y], float))
     def copy(self):
-        return Physics(self.center,self.geom.copy(),self.triangle_geom,self.vel,self.triangle_vel)
-    #Переделать, так как не имеет смысла
+        return Physics(self.center.copy(),self.geom.copy(),self.triangle_geom,self.vel.copy(),self.triangle_vel)
+    #Переделать, так как теперь должно нести новый смысл
     def give_clash_norm(self):
         pass
     def find_furthest_point(self, direction:Point):
@@ -75,7 +74,10 @@ class Physics_circle(Physics):
         angle=m.atan2(direction.y, direction.x)
         return Point(self.center.x + (self.geom.peaks[0].abs() * m.cos(angle)),self.center.y + (self.geom.peaks[0].abs() * m.sin(angle)))
     def copy(self):
-        return Physics_circle(self.center,self.geom.peaks,self.geom.color,self.triangle_geom,self.vel,self.triangle_vel)
+        cop=[]
+        for i in self.geom.peaks:
+            cop.append(i.copy())
+        return Physics_circle(self.center.copy(),cop,self.geom.color,self.triangle_geom,self.vel.copy(),self.triangle_vel)
 
 class Physics_polygon(Physics):
     def __init__(self,center:Point,peaks,color,triangle_geom,velocity,triangle_vel):
@@ -95,4 +97,7 @@ class Physics_polygon(Physics):
         #пока не переделал эту часть под задание по часовой стрелке
 
     def copy(self):
-         return Physics_polygon(self.center,self.geom.peaks,self.geom.color,self.triangle_geom,self.vel,self.triangle_vel)
+        cop = []
+        for i in self.geom.peaks:
+            cop.append(i.copy())
+        return Physics_polygon(self.center.copy(),cop,self.geom.color,self.triangle_geom,self.vel.copy(),self.triangle_vel)

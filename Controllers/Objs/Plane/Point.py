@@ -14,3 +14,5 @@ class Point:
         return Point(self.y, -self.x)
     def abs(self):
         return ((self.x)**2+(self.y)**2)**0.5
+    def copy(self):
+        return Point(self.x,self.y)

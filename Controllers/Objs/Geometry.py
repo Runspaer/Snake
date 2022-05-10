@@ -10,13 +10,19 @@ class Geometry:
     def draw(self,screen,center):
         pass
     def copy(self):
-        return Geometry(self.peaks,self.color)
+        cop=[]
+        for i in self.peaks:
+            cop.append(i.copy())
+        return Geometry(cop,self.color)
 
 class Geometry_circle(Geometry):
     def draw(self,screen,center):
         pygame.draw.circle(screen, self.color, (center.x, center.y), self.peaks[0].abs())
     def copy(self):
-        return Geometry_circle(self.peaks,self.color)
+        cop = []
+        for i in self.peaks:
+            cop.append(i.copy())
+        return Geometry_circle(cop,self.color)
 
 
 class Geometry_polygon(Geometry):
@@ -25,4 +31,7 @@ class Geometry_polygon(Geometry):
         coord=[[i.x,i.y] for i in coord]
         pygame.draw.polygon(screen, self.color, coord)
     def copy(self):
-        return Geometry_polygon(self.peaks,self.color)
+        cop = []
+        for i in self.peaks:
+            cop.append(i.copy())
+        return Geometry_polygon(cop,self.color)

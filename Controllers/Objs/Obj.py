@@ -36,10 +36,6 @@ class Apple(Obj):
         self.is_visibl=False
     def is_collision(self,other):
         return other.is_collision(self)
-    # def eat(self,screen_size):
-    #     self.phys.geom.center=Point(randrange(self.phys.geom.peaks[0].abs()+5, screen_size[0]-(self.phys.geom.peaks[0].abs()+5), 20),
-    #                                 randrange(self.phys.geom.peaks[0].abs()+5, screen_size[1]-(self.phys.geom.peaks[0].abs()+5), 20))
-        #Расписано напрямую, в дальнейшем будет уничтожено
     #def collision(self,head,screen_size):
     #    for i in range(len(self.vec)):
     #        if (((self.vec[i].beg[0]-head.beg[0])**2+(self.vec[i].beg[1]-head.beg[1])**2)**0.5)<=(self.vec[i].size()+head.size()):
