@@ -13,8 +13,9 @@ class Control:
     def is_collision(self, other):
         for i in self.objs:
             for j in other.objs:
-                if i.is_collision(j):
-                    return [i,j]
+                clash_perp=i.is_collision(j)
+                if clash_perp:
+                    return [i,j,clash_perp]
         return False
 
 class Apples_Control(Control):

@@ -35,11 +35,13 @@ class Snake(Obj):
         screen.blit(render_score,(self.score_point.x,self.score_point.y))
 
     def is_collision(self,other):
-        if self.phys.is_collision(other.phys):
-            return True
-        for i in self.tail:
-            if i.phys.is_collision(other.phys):
-                return True
+        clash_perp=self.phys.is_collision(other.phys)
+        if clash_perp:
+            return clash_perp
+        # for i in self.tail:
+        #     clash_perp=i.phys.is_collision(other.phys)
+        #     if clash_perp:
+        #         return clash_perp
         return False
 
     def eat(self):
@@ -58,14 +60,14 @@ class Snake(Obj):
         cop.center-=self.tail[-1].phys.vel
         self.tail.append(Obj(cop))
 
-    def rebound(self,other):
-        ?????????????????
+    def rebound(self,clash_norm):
+        self.phys.rebound(clash_norm)
 
-    def react_on_clash(self,other):
+    def react_on_clash(self,other,clash_norm):
         if type(other)==Apple:
             self.eat()
         if type(other)==Wall:
-            self.rebound(other)
+            self.rebound(clash_norm)
 
 
             #pygame.draw.circle(screen, i.color, (i.coord.x, i.coord.y), i.r)

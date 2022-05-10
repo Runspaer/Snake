@@ -24,9 +24,21 @@ def include_objs(screen_size:list):
     # #
     # mass.append(Snake.Snake(Point(screen_size[0]//2,screen_size[1]//2),Point(2,0),'green',15,[]))
     # mass.append(Apple.Apple(Point(50,50),Point(0,0),'red',10))
-    mass.append(Walls_Control(Wall(Physics_polygon(Point(0, screen_size[1] / 2),
-                                                   [Point(1, screen_size[1] / 2), Point(1, -screen_size[1] / 2), Point(-1, -screen_size[1] / 2),Point(-1, screen_size[1] / 2)],
-                                                   'blue', 0, Point(0, 0), 0),Point(0, 0))))
+    weight=5
+    mass.append(Walls_Control(Wall(Physics_polygon(Point(-weight, screen_size[1] / 2),
+                                                    [Point(weight+1, screen_size[1] / 2), Point(weight+1, -screen_size[1] / 2), Point(-weight-1, -screen_size[1] / 2),Point(-weight-1, screen_size[1] / 2)],
+                                                    'blue', 0, Point(0, 0), 0),Point(1, 0))))#Левая стена
+    mass.append(Walls_Control(Wall(Physics_polygon(Point(screen_size[0]+weight, screen_size[1] / 2),
+                                                   [Point(weight+1, screen_size[1] / 2), Point(weight+1, -screen_size[1] / 2), Point(-weight-1, -screen_size[1] / 2),Point(-weight-1, screen_size[1] / 2)],
+                                                   'blue', 0, Point(0, 0), 0),Point(0, 0))))#Права стена
+    mass.append(Walls_Control(Wall(Physics_polygon(Point(screen_size[0]/2, -weight),
+                                                   [Point(screen_size[0]/2, -weight-1), Point(screen_size[0]/2, weight+1),
+                                                    Point(-screen_size[0]/2, weight+1), Point(-screen_size[0]/2, weight-1)],
+                                                   'blue', 0, Point(0, 0), 0), Point(0, 0))))#Верхняя стена
+    mass.append(Walls_Control(Wall(Physics_polygon(Point(screen_size[0] / 2, screen_size[1]+weight),
+                                                   [Point(screen_size[0] / 2, weight+1), Point(screen_size[0] / 2, -weight-1),
+                                                    Point(-screen_size[0] / 2, -weight-1), Point(-screen_size[0] / 2, weight+1)],
+                                                   'blue', 0, Point(0, 0), 0), Point(0, 0))))
     # mass.append(Obj.Size_wall(Point(1,screen_size[1]/2),Point(0,0),'blue',0,screen_size[1]/2-1,Point(1,0)))#Левая стена
     # mass.append(Obj.Size_wall(Point(screen_size[0]-1, screen_size[1] / 2), Point(0, 0), 'blue', 0, screen_size[1] / 2-1,Point(0,0)))#Правая стена
     # mass.append(Obj.Size_wall(Point(screen_size[0]/2, 1), Point(0, 0), 'blue', screen_size[0] / 2, 0,Point(0,1)))#Верхняя стена

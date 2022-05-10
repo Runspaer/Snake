@@ -10,7 +10,7 @@ class Point:
         return Point(self.x - other.x, self.y - other.y)
     def __add__(self, other):
         return Point(self.x + other.x, self.y + other.y)
-    def norm(self):
+    def perp(self):
         return Point(self.y, -self.x)
     def abs(self):
         return ((self.x)**2+(self.y)**2)**0.5

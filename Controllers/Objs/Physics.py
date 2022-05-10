@@ -8,6 +8,22 @@ class Enum:
     def __init__(self,left,right):
         self.left=left
         self.right=right
+#ОООООчень неправильно, но может сработать
+class Line:
+    def __init__(self, global_peaks):#Только 2 элемента, так как линия
+        self.global_peaks=global_peaks
+
+    def find_furthest_point(self, direction: Point):
+        pointers = self.global_peaks
+        max_point = Point(0, 0)
+        max_r = -10000000000000000000
+        for i in pointers:
+            if i * direction > max_r:
+                max_r = i * direction
+                max_point = i
+        return max_point
+    def perp(self):
+        return (self.global_peaks[0]-self.global_peaks[1]).perp()
 
 
 class Physics:
@@ -44,34 +60,117 @@ class Physics:
     def copy(self):
         return Physics(self.center.copy(),self.geom.copy(),self.triangle_geom,self.vel.copy(),self.triangle_vel)
     #Переделать, так как теперь должно нести новый смысл
-    def give_clash_norm(self):
-        pass
     def find_furthest_point(self, direction:Point):
         pass
     def is_collision(self,other):
-        return self.GJK(other)
+        if self.GJK(other):
+            collision_pointers_first, collision_pointers_second=self.GJK(other)
+
+            for i in range(len(collision_pointers_first)):
+                colisiion_line=Line([collision_pointers_first[i],collision_pointers_first[(i+1)%len(collision_pointers_first)]])
+                if other.GJK(colisiion_line):
+                    collision_pointers_first=colisiion_line.perp()
+                    break
+            for i in range(len(collision_pointers_second)):
+                colisiion_line=Line([collision_pointers_second[i],collision_pointers_second[(i+1)%len(collision_pointers_second)]])
+                if other.GJK(colisiion_line):
+                    collision_pointers_second=colisiion_line.perp()
+                    break
+            return [collision_pointers_first,collision_pointers_second]
+        return False
+
     def clash(self,other):
         pass
-    def support(self, B, direction: Point):  # r A B #A B r
+
+    def support(self, B, direction: Point):
         return self.find_furthest_point(direction) - B.find_furthest_point(Point(-direction.x,-direction.y))#-r
+
     def GJK(self,B):
-        support = self.support(B,Point(1,0))# r a b # a b r
-        simplex=Simplex([support])
-        direction = Point(-1, 0)
+        direction=Point(1,0)# можно выбрать любое начальное направление, давайте возьмём 1 0
+        support = self.support(B,direction)
+
+        #Сейчас будем считать столкновение только с одной из фигур,
+        #разницы в теории нет, максимум может мешать круг, но это мы выясним позже
+
+        collision_pointers_first=[self.find_furthest_point(direction)]
+        collision_pointers_second=[B.find_furthest_point(Point(-direction.x,-direction.y))]
+        simplex=Simplex([support],collision_pointers_first,collision_pointers_second)
+
+        #Смотрим по обратному направлению, так как мы ищем ближайшую точку к началу координат.
+        #Если наша изначальная точка совпала с ближайшей точкой к началу координат, то пересечения точно нет
+        direction = Point(-support.x, -support.y)
         while direction:
             support = self.support(B, direction)
+            #Если новая точка не находится в направлении поиска, то тогда мы выходим и пересечения нет
+            #Т.е. функция поддержки вернула точку, которая уже была самой дальней в направлении
             if support * direction <= 0:
                 return False
-            simplex.push_back(support)
+            simplex.push_back(support,self.find_furthest_point(direction),B.find_furthest_point(Point(-direction.x,-direction.y)))
             direction = simplex.CalculateDirection()
-        return True
+        #?????????????????????
+        # for i in range(len(collision_pointers)):
+        #     print(collision_pointers[i].x,collision_pointers[i].y)
+        #     #print((collision_pointers[i]-collision_pointers[(i+1)%3]).x,(collision_pointers[i]-collision_pointers[(i+1)%3]).y)
+        # print('pointers','\n')
+        # for i in self.geom.give_gl_peaks(self.center):
+        #     print(i.x,i.y)
+        # print('peaks','\n')
+        #Объекты столкнулись и мы знаем точки, которые участвовали в вычислении столкновений
+        return [simplex.collision_pointers_first,simplex.collision_pointers_second]
+
+    def rebound(self,clash_norm):
+        norm = [clash_norm,
+                Point(-clash_norm.x, -clash_norm.y)]  # лист, который содержит нормаль к центру и против цента
+        for i in norm:
+            if (i * self.vel) <= 0:  # выбираем нормаль к центру
+                 # print(i.x, i.y)
+                 # i=i/i.abs()
+                 #
+                 # self.vel+=i
+                 # self.center -= Point(self.vel.x * 10, self.vel.y * 10)
+                print(i.x, i.y)
+                print(self.vel.x, self.vel.y)
+                a = m.degrees(
+                    m.acos(i * self.vel / (self.vel.abs() * i.abs()))) - 90  # угол в градусах
+                print(a)
+                a = 2 * a
+                print(a)
+                v1 = Point(0, 0)
+                v1.x, v1.y = np.dot(np.array(
+                    [[m.cos(m.radians(a)), -m.sin(m.radians(a))], [m.sin(m.radians(a)), m.cos(m.radians(a))]],
+                    float), np.array([self.vel.x, self.vel.y], float))#Вращение по часовой
+                print(v1.x, v1.y)
+                if i * v1 >= 0:
+                    self.vel.x, self.vel.y = v1.x, v1.y
+                else:
+                    self.vel.x, self.vel.y = np.dot(np.array(
+                        [[m.cos(m.radians(a)), m.sin(m.radians(a))], [-m.sin(m.radians(a)), m.cos(m.radians(a))]],
+                        float), np.array([self.vel.x, self.vel.y], float))# Вращение против часовой
+                print(self.vel.x, self.vel.y)
+                print()
+                break
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class Physics_circle(Physics):
     def __init__(self,center:Point,peaks,color,triangle_geom,velocity,triangle_vel):
         super().__init__(center,Geometry_circle(peaks,color),triangle_geom,velocity,triangle_vel)
     def find_furthest_point(self, direction:Point):
-        angle=m.atan2(direction.y, direction.x)
+        angle=m.atan2(direction.y, direction.x)# арктангенс y/x в радианах
         return Point(self.center.x + (self.geom.peaks[0].abs() * m.cos(angle)),self.center.y + (self.geom.peaks[0].abs() * m.sin(angle)))
     def copy(self):
         cop=[]

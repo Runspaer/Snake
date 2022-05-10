@@ -9,7 +9,7 @@ class Obj:
         self.phys.tick()
     def draw(self,screen):
         self.phys.draw(screen)
-    def react_on_clash(self,other):
+    def react_on_clash(self,other,clash_norm):
         pass
     def copy(self):
         return Obj(self.phys.copy())
@@ -23,16 +23,16 @@ class Wall(Obj):
     def __init__(self,phys:Physics,sight:Point):
         super().__init__(phys)
         self.sight=sight#Обозначает сдвиг изображения
-    def react_on_clash(self,other):
+    def react_on_clash(self,other,clash_norm):
         pass
 
 class Dead_wall(Wall):
-    def react_on_clash(self,other):#Убивает сущетво, которе прикоснулось к ней
+    def react_on_clash(self,other,clash_norm):#Убивает сущетво, которе прикоснулось к ней
         pass
 
 
 class Apple(Obj):
-    def react_on_clash(self,other):#Умирает
+    def react_on_clash(self,other,clash_norm):#Умирает
         self.is_visibl=False
     def is_collision(self,other):
         return other.is_collision(self)
