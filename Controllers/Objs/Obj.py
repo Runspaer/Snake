@@ -9,26 +9,33 @@ class Obj:
         self.phys.tick()
     def draw(self,screen):
         self.phys.draw(screen)
-    def react_on_clash(self):
+    def react_on_clash(self,other):
         pass
     def copy(self):
         return Obj(self.phys.copy())
+    def is_collision(self,other):
+        pass
+    #     if self.phys.is_collision(other):
+    #         return True
+    #     return False
 
 class Wall(Obj):
     def __init__(self,phys:Physics,sight:Point):
         super().__init__(phys)
         self.sight=sight#Обозначает сдвиг изображения
-    def react_on_clash(self):
+    def react_on_clash(self,other):
         pass
 
 class Dead_wall(Wall):
-    def react_on_clash(self):#Убивает сущетво, которе прикоснулось к ней
+    def react_on_clash(self,other):#Убивает сущетво, которе прикоснулось к ней
         pass
 
 
 class Apple(Obj):
-    def react_on_clash(self):#Умирает
+    def react_on_clash(self,other):#Умирает
         self.is_visibl=False
+    def is_collision(self,other):
+        return other.is_collision(self)
     # def eat(self,screen_size):
     #     self.phys.geom.center=Point(randrange(self.phys.geom.peaks[0].abs()+5, screen_size[0]-(self.phys.geom.peaks[0].abs()+5), 20),
     #                                 randrange(self.phys.geom.peaks[0].abs()+5, screen_size[1]-(self.phys.geom.peaks[0].abs()+5), 20))

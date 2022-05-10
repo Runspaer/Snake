@@ -10,6 +10,12 @@ class Control:
     def draw(self,screen):
         for i in self.objs:
             i.draw(screen)
+    def is_collision(self, other):
+        for i in self.objs:
+            for j in other.objs:
+                if i.is_collision(j):
+                    return [i,j]
+        return False
 
 class Apples_Control(Control):
     pass

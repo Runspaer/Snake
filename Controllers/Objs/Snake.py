@@ -27,14 +27,28 @@ class Snake(Obj):
             i.phys.draw(screen)
         self.phys.draw(screen)
 
-    def eat(self, screen_size):#Добавлено для единообразия
+    def is_collision(self,other):
+        if self.phys.is_collision(other.phys):
+            return True
+        for i in self.tail:
+            if i.phys.is_collision(other.phys):
+                return True
+        return False
+
+    def eat(self):
         if not self.tail:
             cop=self.phys.copy()
-            cop.geom.center-=self.phys.vel
+            cop.center-=self.phys.vel
             self.tail.append(Obj(cop))##Интересная проблема с указателями в питоне, нужно будет рассказать
         cop=self.tail[-1].phys.copy()
-        cop.geom.center-=self.tail[-1].phys.vel
+        cop.center-=self.tail[-1].phys.vel
         self.tail.append(Obj(cop))
+
+    def react_on_clash(self,other):
+        if type(other)==Apple:
+            self.eat()
+
+
             #pygame.draw.circle(screen, i.color, (i.coord.x, i.coord.y), i.r)
     # def clash(self,other):
     #     pass

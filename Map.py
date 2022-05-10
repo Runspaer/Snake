@@ -1,21 +1,22 @@
+import time
 class Map:
     def __init__(self,objs):
         self.objs=objs
     def tick(self):
         for i in range(len(self.objs)):
             self.objs[i].tick()
-    def collision(self,screen_size):
-        pass
-    #     for i in range(len(self.objs)):
-    #         for j in range(i+1,len(self.objs)):
-    #             # if self.objs[i].collision(self.objs[j]):
-    #             #     if (type(self.objs[i])==Snake or type(self.objs[j])==Snake) and(type(self.objs[i])==Apple or type(self.objs[j])==Apple):
-    #             #         self.objs[i].eat(screen_size)
-    #             #         self.objs[j].eat(screen_size)
-    #             #     else:
-    #             #         self.objs[i].clash(self.objs[j])
-    #             #         self.objs[j].clash(self.objs[i])
-    #             if self.objs[i].phys.is_collision(self.objs[j].phys):
+    def collision(self):
+        clash_obj = []
+        for i in range(len(self.objs)):
+            for j in range(i+1,len(self.objs)):
+                cl=self.objs[i].is_collision(self.objs[j])
+                if cl:
+                    cl[0].react_on_clash(cl[1])
+                    cl[1].react_on_clash(cl[0])
+                    clash_obj.append(cl[0])
+                    clash_obj.append(cl[1])
+        return clash_obj
+                #if self.objs[i].phys.is_collision(self.objs[j].phys):
     #                 # for i in self.objs[i].phys.geom.give_gl_peaks():
     #                 #     print(i.x,i.y)
     #                 # for i in self.objs[j].phys.geom.give_gl_peaks():
