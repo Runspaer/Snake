@@ -20,9 +20,9 @@ class Obj:
     #     return False
 
 class Wall(Obj):
-    def __init__(self,phys:Physics,sight:Point):
+    def __init__(self,phys:Physics):
         super().__init__(phys)
-        self.sight=sight#Обозначает сдвиг изображения
+        #self.sight=sight#Обозначает сдвиг изображения
     def react_on_clash(self,other,clash_norm):
         pass
 

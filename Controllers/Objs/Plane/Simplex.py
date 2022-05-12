@@ -48,6 +48,7 @@ class Simplex:
         if abPerp * ao <= 0:
             abPerp = Point(-abPerp.x, -abPerp.y)
         return abPerp
+
     def push_back(self,new_point_simplex: Point,new_point_collision_first,new_point_collision_second):
         self.simplex.append(new_point_simplex)
         self.collision_pointers_first.append(new_point_collision_first)

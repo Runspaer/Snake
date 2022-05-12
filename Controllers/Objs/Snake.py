@@ -3,6 +3,7 @@ import pygame.transform
 from Controllers.Objs.Obj import *
 import numpy as np
 import math as m
+from random import randint
 class Snake(Obj):
     def __init__(self,phys:Physics,score_point:Point):#Возможно будет ошибкой добавлять сюда координаты счётчика, но пусть пока будет так
         super().__init__(phys)
@@ -26,9 +27,9 @@ class Snake(Obj):
 
 
     def draw(self,screen):
+        self.phys.draw(screen)
         for i in self.tail:
             i.phys.draw(screen)
-        self.phys.draw(screen)
         #Можно даже сделать как класс, но это уже будет усложнение, пока оставлю так
         font_score = pygame.font.SysFont('Arial', 20, bold=True)
         render_score = font_score.render(f'Score: {len(self.tail)//2}',1,self.phys.geom.color)
@@ -45,16 +46,21 @@ class Snake(Obj):
         return False
 
     def eat(self):
+
         if not self.tail:
             cop=self.phys.copy()
             cop.matpov_vel=np.array([[1,0],[0, 1]], float)
             cop.center-=self.phys.vel
+            cop.geom.color=(randint(1,255),randint(1,255),randint(1,255))
             self.tail.append(Obj(cop))##Интересная проблема с указателями в питоне, нужно будет рассказать
+
         else:
             cop = self.tail[-1].phys.copy()
             cop.matpov_vel = np.array([[1, 0], [0, 1]], float)
             cop.center -= self.tail[-1].phys.vel
+            cop.geom.color = (randint(1, 255), randint(1, 255), randint(1, 255))
             self.tail.append(Obj(cop))
+
         cop=self.tail[-1].phys.copy()
         cop.matpov_vel = np.array([[1, 0], [0, 1]], float)
         cop.center-=self.tail[-1].phys.vel
