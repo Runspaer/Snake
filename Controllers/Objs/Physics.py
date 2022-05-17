@@ -3,7 +3,7 @@ from Controllers.Objs.Plane.Simplex import *
 import math as m
 import numpy as np
 from pygame import key
-#Для тестов
+#Тесты
 import time
 
 class Enum:
@@ -11,10 +11,10 @@ class Enum:
         self.left=left
         self.right=right
 #ОООООчень неправильно, но может сработать
-class Line:
-    def __init__(self, global_peaks):#Только 2 элемента, так как линия
+class Side:
+    def __init__(self, global_peaks,center):#содержит гольбальные координаты векторов, образующих сторону и центр
         self.global_peaks=global_peaks
-
+        self.center=center
     def find_furthest_point(self, direction: Point):
         pointers = self.global_peaks
         max_point = Point(0, 0)
@@ -24,8 +24,19 @@ class Line:
                 max_r = i * direction
                 max_point = i
         return max_point
-    def perp(self):
-        return (self.global_peaks[0]-self.global_peaks[1]).perp()
+    def perp_outside(self):
+        a = self.global_peaks[0]
+        b = self.global_peaks[1]
+        ab = b - a
+        abPerp = ab.perp()
+        ao= self.center - a
+
+        # Проверяем направление перпендикуляра, он должен
+        # быть направлен против фигуры
+        if abPerp * ao >= 0:
+            abPerp = -abPerp
+        return abPerp
+
 
 
 class Physics:
@@ -76,54 +87,75 @@ class Physics:
 
     def is_collision(self,other):
         if self.GJK(other):
-            collision_pointers_first, collision_pointers_second=self.GJK(other)
-            for i in range(len(collision_pointers_first)):
-                colisiion_line=Line([collision_pointers_first[i],collision_pointers_first[(i+1)%len(collision_pointers_first)]])
-                if other.GJK(colisiion_line):
-                    collision_pointers_first=colisiion_line.perp()
-                    # #Тесты
-                    # for i in colisiion_line.global_peaks:
-                    #     print(i.x,i.y, 'aaaaaaaaaa')
-                    break
-            for i in range(len(collision_pointers_second)):
-                colisiion_line=Line([collision_pointers_second[i],collision_pointers_second[(i+1)%len(collision_pointers_second)]])
-                if other.GJK(colisiion_line):
-                    collision_pointers_second=colisiion_line.perp()
-                    break
-            return [collision_pointers_first,collision_pointers_second]
+            collision_pointers=self.GJK(other)
+            # Из-за проблемы с коллизией будем выкручиваться, проверяем, что оба объекта не являются кругами,
+            # если нашли хотя бы один не круг, то всё хорошо и делаем отраение относительное его стороны, иначе просто делаем отскок на 90 градусов
+
+            if len(self.geom.peaks)!=1 and len(other.geom.peaks)!=1:
+                # Выбираем объект с которым будем сталкивать, он не должен быть кругом
+                if len(self.geom.peaks)!=1:
+                    colliding_obj = self
+                    clash_obj=other
+                    collision_peaks = collision_pointers[1]
+                else:
+                    colliding_obj = other
+                    clash_obj=self
+                    collision_peaks = collision_pointers[0]
+
+                #Теперь мы проходим составляем из точек стороны фигуры, чтобы понять, с какой именно стороной произошло пересечение.
+                #У нас будет три варианта для сторон
+
+                for i in range(3):#Так как у нас всегда функция возвращает 3 точки
+                    # Создаём сторону и проверяем, что найденная сторона действительно является частью фигуры
+
+                    colisiion_Side=Side([collision_peaks[i],collision_peaks[(i+1)%3]],clash_obj.center)#%3 так как длина 3
+                    side=collision_peaks[i]-collision_peaks[(i+1)%3]
+
+                    flag=False
+                    for j in clash_obj.geom.give_side():
+                        if (side.x==j.x and side.y==j.y) or (-side.x==j.x and -side.y==j.y):
+                            flag=True
+                            break
+                    if flag:
+                        #Проверяем пересечение
+                        if colliding_obj.GJK(colisiion_Side):
+                            collision_perp=colisiion_Side.perp_outside()
+
+                            if self==colliding_obj:
+                                return [collision_perp,-collision_perp]
+                            return [-collision_perp,collision_perp]
+
+            return [-self.vel,-other.vel]
         return False
 
     def clash(self,other):
         pass
 
     def support(self, B, direction: Point):
-        return self.find_furthest_point(direction) - B.find_furthest_point(Point(-direction.x,-direction.y))#-r
+        return self.find_furthest_point(direction) - B.find_furthest_point(-direction)#-r
 
     def GJK(self,B):
         direction=Point(1,0)# можно выбрать любое начальное направление, давайте возьмём 1 0
         support = self.support(B,direction)
-
-        #Сейчас будем считать столкновение только с одной из фигур,
-        #разницы в теории нет, максимум может мешать круг, но это мы выясним позже
-
-        #Уже переделал, так что тут считаются оба, мб сейчас переделаем
-
+        # запоминаем, какие координаты первой фигуры учитывались в симплексе
         collision_pointers_first=[self.find_furthest_point(direction)]
-        collision_pointers_second=[B.find_furthest_point(Point(-direction.x,-direction.y))]
+
+        # запоминаем, какие координаты второй фигуры учитывались в симплексе
+        collision_pointers_second=[B.find_furthest_point(-direction)]
+
         simplex=Simplex([support],collision_pointers_first,collision_pointers_second)
 
         #Смотрим по обратному направлению, так как мы ищем ближайшую точку к началу координат.
         #Если наша изначальная точка совпала с ближайшей точкой к началу координат, то пересечения точно нет
-        direction = Point(-support.x, -support.y)
+        direction = -support
         while direction:
             support = self.support(B, direction)
             #Если новая точка не находится в направлении поиска, то тогда мы выходим и пересечения нет
             #Т.е. функция поддержки вернула точку, которая уже была самой дальней в направлении
             if support * direction <= 0:
                 return False
-            simplex.push_back(support,self.find_furthest_point(direction),B.find_furthest_point(Point(-direction.x,-direction.y)))
+            simplex.push_back(support,self.find_furthest_point(direction),B.find_furthest_point(-direction))
             direction = simplex.CalculateDirection()
-        #?????????????????????
         # #Тесты
         # for i in range(len(collision_pointers)):
         #     print(collision_pointers[i].x,collision_pointers[i].y)
@@ -135,41 +167,25 @@ class Physics:
         #Объекты столкнулись и мы знаем точки, которые участвовали в вычислении столкновений
         # #Тесты
         # print(collision_pointers_first[0].x,collision_pointers_first[0].y,'aaaaaa')
+        # print(collision_pointers_second[0].x, collision_pointers_second[0].y, 'aaaaaa')
         # time.sleep(5)
         return [simplex.collision_pointers_first,simplex.collision_pointers_second]
 
     def rebound(self,clash_norm):
-        norm = [clash_norm,
-                Point(-clash_norm.x, -clash_norm.y)]  # лист, который содержит нормаль к центру и против цента
-        for i in norm:
-            if (i * self.vel) <= 0:  # выбираем нормаль к центру
-                 # print(i.x, i.y)
-                i=Point(i.x/i.abs(), i.y/i.abs())
-                 #
-                 # self.vel+=i
-                 # self.center -= Point(self.vel.x * 10, self.vel.y * 10)
-                print(i.x, i.y)
-                print(self.vel.x, self.vel.y)
-                a = m.degrees(
-                    m.acos(i * self.vel / (self.vel.abs() * i.abs()))) - 90  # угол в градусах
-                print(a)
-                d=m.sqrt(2*self.vel.abs()**2*(1-m.cos(m.radians(2*a))))
-                i=Point(i.x*d,i.y*d)
-                self.vel=self.vel+i
-                # v1 = Point(0, 0)
-                # v1.x, v1.y = np.dot(np.array(
-                #     [[m.cos(m.radians(a)), -m.sin(m.radians(a))], [m.sin(m.radians(a)), m.cos(m.radians(a))]],
-                #     float), np.array([self.vel.x, self.vel.y], float))#Вращение по часовой
-                # print(v1.x, v1.y)
-                # if i * v1 >= 0:
-                #     self.vel.x, self.vel.y = v1.x, v1.y
-                # else:
-                #     self.vel.x, self.vel.y = np.dot(np.array(
-                #         [[m.cos(m.radians(a)), m.sin(m.radians(a))], [-m.sin(m.radians(a)), m.cos(m.radians(a))]],
-                #         float), np.array([self.vel.x, self.vel.y], float))# Вращение против часовой
-                # print(self.vel.x, self.vel.y)
-                # print()
-                break
+            clash_norm=Point(clash_norm.x/clash_norm.abs(), clash_norm.y/clash_norm.abs())
+            #
+            # self.vel+=i
+            # self.center -= Point(self.vel.x * 10, self.vel.y * 10)
+            # #Тесты
+            # print(i.x, i.y)
+            # print(self.vel.x, self.vel.y)
+            a = m.degrees(
+                m.acos((clash_norm * self.vel) / (self.vel.abs() * clash_norm.abs()))) - 90  # угол в градусах
+            # #Тесты
+            print(a)
+            d=m.sqrt(2*(self.vel.abs()**2)*(1-m.cos(m.radians(2*a))))
+            clash_norm=Point(clash_norm.x*d,clash_norm.y*d)
+            self.vel=self.vel+clash_norm
 
 
 class Physics_circle(Physics):

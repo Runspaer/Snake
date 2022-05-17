@@ -14,6 +14,10 @@ class Geometry:
         for i in self.peaks:
             cop.append(i.copy())
         return Geometry(cop,self.color)
+    def give_side(self):
+        return [self.peaks[(i+1)%len(self.peaks)] - self.peaks[i] for i in range(len(self.peaks))]
+
+
 
 class Geometry_circle(Geometry):
     def draw(self,screen,center):

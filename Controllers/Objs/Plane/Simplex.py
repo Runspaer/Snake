@@ -7,17 +7,19 @@ class Simplex:
 
     def CalculateDirection(self):
         a = self.simplex[-1]
-        ao = Point(-a.x, -a.y)
+        ao =-a
         if len(self.simplex) == 3:  # Треугольник
             b = self.simplex[1]
             c = self.simplex[0]
             ab = b - a
             ac = c - a
             abPerp =ab.perp()
+
             # Проверяем направление перпендикуляра, он должен
             # быть направлен против симплекса
             if abPerp * c >= 0:
-                abPerp = Point(-abPerp.x, -abPerp.y)
+                abPerp = -abPerp
+
             #Если начало координат лежит за пределами симплекса, т.е. в направлении перпендкуляра
             #удаляем точку и определяем новое направление в направлении перпендикуляра
             if abPerp * ao > 0:
@@ -26,10 +28,12 @@ class Simplex:
                 self.collision_pointers_second.pop(0)
                 return abPerp
             acPerp =ac.perp()
+
             # Проверяем направление перпендикуляра, он должен
             # быть направлен против симплекса
             if acPerp * b >= 0:
-                acPerp = Point(-acPerp.x, -abPerp.y)
+                acPerp =-acPerp
+
             # Если начало координат лежит за пределами симплекса, т.е. в направлении перпендкуляра
             # удаляем точку и определяем новое направление в направлении перпендикуляра
             if acPerp * ao > 0:
@@ -37,16 +41,18 @@ class Simplex:
                 self.collision_pointers_first.pop(1)
                 self.collision_pointers_second.pop(1)
                 return acPerp
+
             # Лежит внутри
             return False
         # Не треугольник,т.е. линия
         b = self.simplex[0]
         ab = b - a
         abPerp = ab.perp()
+
         # Проверяем направление перпендикуляра, он должен
         # быть направлен к началу координат
         if abPerp * ao <= 0:
-            abPerp = Point(-abPerp.x, -abPerp.y)
+            abPerp =-abPerp
         return abPerp
 
     def push_back(self,new_point_simplex: Point,new_point_collision_first,new_point_collision_second):

@@ -26,11 +26,6 @@ class Wall(Obj):
     def react_on_clash(self,other,clash_norm):
         pass
 
-class Dead_wall(Wall):
-    def react_on_clash(self,other,clash_norm):#Убивает сущетво, которе прикоснулось к ней
-        pass
-
-
 class Apple(Obj):
     def react_on_clash(self,other,clash_norm):#Умирает
         self.is_visibl=False
