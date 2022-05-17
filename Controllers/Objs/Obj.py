@@ -15,9 +15,15 @@ class Obj:
         return Obj(self.phys.copy())
     def is_collision(self,other):
         pass
+    def tick_no_turn(self):
+        self.phys.tick_no_turn()
     #     if self.phys.is_collision(other):
     #         return True
     #     return False
+
+class Tail(Obj):
+    def copy(self):
+        return Tail(self.phys.copy())
 
 class Wall(Obj):
     def __init__(self,phys:Physics):

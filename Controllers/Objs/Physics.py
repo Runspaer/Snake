@@ -24,7 +24,7 @@ class Side:
                 max_r = i * direction
                 max_point = i
         return max_point
-    def perp_outside(self):
+    def perp_outside(self,colliding_obj_vel):
         a = self.global_peaks[0]
         b = self.global_peaks[1]
         ab = b - a
@@ -35,7 +35,10 @@ class Side:
         # быть направлен против фигуры
         if abPerp * ao >= 0:
             abPerp = -abPerp
-        return abPerp
+
+        if abPerp*colliding_obj_vel<=0:
+            return abPerp
+        return False
 
 
 
@@ -119,11 +122,12 @@ class Physics:
                     if flag:
                         #Проверяем пересечение
                         if colliding_obj.GJK(colisiion_Side):
-                            collision_perp=colisiion_Side.perp_outside()
+                            collision_perp = colisiion_Side.perp_outside(colliding_obj.vel)
+                            if collision_perp:
 
-                            if self==colliding_obj:
-                                return [collision_perp,-collision_perp]
-                            return [-collision_perp,collision_perp]
+                                if self==colliding_obj:
+                                    return [collision_perp,-collision_perp]
+                                return [-collision_perp,collision_perp]
 
             return [-self.vel,-other.vel]
         return False
@@ -172,20 +176,35 @@ class Physics:
         return [simplex.collision_pointers_first,simplex.collision_pointers_second]
 
     def rebound(self,clash_norm):
-            clash_norm=Point(clash_norm.x/clash_norm.abs(), clash_norm.y/clash_norm.abs())
-            #
-            # self.vel+=i
-            # self.center -= Point(self.vel.x * 10, self.vel.y * 10)
-            # #Тесты
-            # print(i.x, i.y)
-            # print(self.vel.x, self.vel.y)
+        # print(clash_norm.x,clash_norm.y)
+        clash_norm=Point(clash_norm.x/clash_norm.abs(), clash_norm.y/clash_norm.abs())
+        # print(clash_norm.x, clash_norm.y)
+        #
+        # self.vel+=i
+        # self.center -= Point(self.vel.x * 10, self.vel.y * 10)
+        # #Тесты
+        # print(i.x, i.y)
+        # print(self.vel.x, self.vel.y)
+        if abs(((clash_norm * self.vel) / (self.vel.abs())))>1:
+            a = m.degrees(m.acos(-1))
+        else:
             a = m.degrees(
-                m.acos((clash_norm * self.vel) / (self.vel.abs() * clash_norm.abs()))) - 90  # угол в градусах
-            # #Тесты
-            print(a)
-            d=m.sqrt(2*(self.vel.abs()**2)*(1-m.cos(m.radians(2*a))))
-            clash_norm=Point(clash_norm.x*d,clash_norm.y*d)
-            self.vel=self.vel+clash_norm
+                m.acos((clash_norm * self.vel) / (self.vel.abs()))) - 90  # угол в градусах
+        # if a<0:
+        #     print(a,clash_norm.x,clash_norm.y)
+        #     time.sleep(20)
+        # #Тесты
+        # print(a)
+        d=m.sqrt(2*(self.vel.abs()**2)*(1-m.cos(m.radians(2*a))))
+        # print(d)
+        clash_norm=Point(clash_norm.x*d,clash_norm.y*d)
+        # print(clash_norm.x, clash_norm.y)
+        # print(self.vel.x,self.vel.y)
+        self.vel=self.vel+clash_norm
+    def tick_no_turn(self):
+        self.center+=self.vel
+
+
 
 
 class Physics_circle(Physics):

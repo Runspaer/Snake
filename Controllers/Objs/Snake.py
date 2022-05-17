@@ -7,7 +7,7 @@ from random import randint
 class Snake(Obj):
     def __init__(self,phys:Physics,score_point:Point):#Возможно будет ошибкой добавлять сюда координаты счётчика, но пусть пока будет так
         super().__init__(phys)
-        self.tail=[]#Physics
+        self.tail=[]#Tail
         self.score_point=score_point
 
     def tick(self,buttons):
@@ -52,22 +52,29 @@ class Snake(Obj):
             cop.matpov_vel=np.array([[1,0],[0, 1]], float)
             cop.center-=self.phys.vel
             cop.geom.color=(randint(1,255),randint(1,255),randint(1,255))
-            self.tail.append(Obj(cop))##Интересная проблема с указателями в питоне, нужно будет рассказать
+            self.tail.append(Tail(cop))##Интересная проблема с указателями в питоне, нужно будет рассказать
 
         else:
             cop = self.tail[-1].phys.copy()
             cop.matpov_vel = np.array([[1, 0], [0, 1]], float)
             cop.center -= self.tail[-1].phys.vel
             cop.geom.color = (randint(1, 255), randint(1, 255), randint(1, 255))
-            self.tail.append(Obj(cop))
+            self.tail.append(Tail(cop))
 
         cop=self.tail[-1].phys.copy()
         cop.matpov_vel = np.array([[1, 0], [0, 1]], float)
         cop.center-=self.tail[-1].phys.vel
-        self.tail.append(Obj(cop))
+        self.tail.append(Tail(cop))
 
     def rebound(self,clash_norm):
         self.phys.rebound(clash_norm)
+        self.tick_no_turn()
+        for i in range(1, len(self.tail)):
+            self.tail[-i].tick_no_turn()  # Использует стандартный tick из Obj
+            self.tail[-i].phys.vel = self.tail[-i - 1].phys.vel.copy()  # Помни про указатели
+        if self.tail:
+            self.tail[0].tick_no_turn()  # Использует стандартный tick из Obj
+            self.tail[0].phys.vel = self.phys.vel.copy()  # Помни про указатели
 
     def react_on_clash(self,other,clash_norm):
         if type(other)==Apple:
