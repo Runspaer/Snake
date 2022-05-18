@@ -15,7 +15,7 @@ class Control:
             for j in other.objs:
                 clash_perp=i.is_collision(j)
                 if clash_perp:
-                    return [i,j,clash_perp]
+                    return [i,j,clash_perp[0],clash_perp[1]]
         return False
 
 class Apples_Control(Control):

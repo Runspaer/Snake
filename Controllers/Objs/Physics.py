@@ -36,7 +36,7 @@ class Side:
         if abPerp * ao >= 0:
             abPerp = -abPerp
 
-        if abPerp*colliding_obj_vel<=0:
+        if abPerp*colliding_obj_vel<0:
             return abPerp
         return False
 
@@ -84,7 +84,6 @@ class Physics:
     def copy(self):
         return Physics(self.center.copy(),self.geom.copy(),self.triangle_geom,self.vel.copy(),self.triangle_vel)
 
-    #Переделать, так как теперь должно нести новый смысл
     def find_furthest_point(self, direction:Point):
         pass
 
@@ -92,7 +91,7 @@ class Physics:
         if self.GJK(other):
             collision_pointers=self.GJK(other)
             # Из-за проблемы с коллизией будем выкручиваться, проверяем, что оба объекта не являются кругами,
-            # если нашли хотя бы один не круг, то всё хорошо и делаем отраение относительное его стороны, иначе просто делаем отскок на 90 градусов
+            # если нашли хотя бы один не круг, то всё хорошо и делаем отражение относительное его стороны, иначе просто делаем отскок на 90 градусов
 
             if len(self.geom.peaks)!=1 and len(other.geom.peaks)!=1:
                 # Выбираем объект с которым будем сталкивать, он не должен быть кругом
@@ -104,6 +103,7 @@ class Physics:
                     colliding_obj = other
                     clash_obj=self
                     collision_peaks = collision_pointers[0]
+                print(colliding_obj)
 
                 #Теперь мы проходим составляем из точек стороны фигуры, чтобы понять, с какой именно стороной произошло пересечение.
                 #У нас будет три варианта для сторон
@@ -178,7 +178,7 @@ class Physics:
     def rebound(self,clash_norm):
         # print(clash_norm.x,clash_norm.y)
         clash_norm=Point(clash_norm.x/clash_norm.abs(), clash_norm.y/clash_norm.abs())
-        # print(clash_norm.x, clash_norm.y)
+        print(clash_norm.x, clash_norm.y,' norm')
         #
         # self.vel+=i
         # self.center -= Point(self.vel.x * 10, self.vel.y * 10)
@@ -194,13 +194,17 @@ class Physics:
         #     print(a,clash_norm.x,clash_norm.y)
         #     time.sleep(20)
         # #Тесты
-        # print(a)
+        print(2*(self.vel.abs()**2),' vel value')
+        print(1-m.cos(m.radians(2*a)),' triangle')
         d=m.sqrt(2*(self.vel.abs()**2)*(1-m.cos(m.radians(2*a))))
-        # print(d)
+        print(d,'d')
         clash_norm=Point(clash_norm.x*d,clash_norm.y*d)
-        # print(clash_norm.x, clash_norm.y)
-        # print(self.vel.x,self.vel.y)
+        print(clash_norm.x, clash_norm.y,' new_norm')
+        print(self.vel.x,self.vel.y,' vel_old')
+        #time.sleep(2)
         self.vel=self.vel+clash_norm
+        print(self.vel.x, self.vel.y, ' vel_new')
+        print()
     def tick_no_turn(self):
         self.center+=self.vel
 

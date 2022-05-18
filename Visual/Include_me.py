@@ -20,16 +20,17 @@ def include_objs(screen_size:list):
     #Кривя квадратная змея
     # mass.append(Snake_Control1(Snake(Physics_polygon(Point(screen_size[0] // 2, screen_size[1] // 2),
     #                                                  [Point(-20, 20), Point(6, 20), Point(6, -20), Point(-20, -20)]
-    #                                                  , 'green', 3, Point(2, 0), 5), Point(5, 5)),
+    #                                                  , 'green', 0, Point(3, 0), 6), Point(5, 5)),
     #                            Enum(pygame.K_LEFT, pygame.K_RIGHT)))
 
-    # # triangle Snake
+    # triangle Snake
     a=Point(0,0)
     b=Point(0,0)
     a.x,a.y=np.dot(np.array([[m.cos(m.radians(120)),-m.sin(m.radians(120))],[m.sin(m.radians(120)),m.cos(m.radians(120))]],float),np.array([0,-10],float))
     b.x,b.y=np.dot(np.array([[m.cos(m.radians(120)),m.sin(m.radians(120))], [-m.sin(m.radians(120)), m.cos(m.radians(120))]],float),np.array([0,-10],float))
-    mass.append(Snake_Control1(Snake(Physics_polygon(Point(screen_size[0] // 2, screen_size[1] // 2),
-    [Point(0, -10), a, b],'green',3, Point(3, 0),5),Point(5,5)),Enum(pygame.K_LEFT,pygame.K_RIGHT)))
+    mass.append(Snake_Control1(Snake(Physics_polygon(Point(randrange(5, screen_size[0]-5, 20),
+                                             randrange(5, screen_size[1]-5)),
+    [Point(0, -10), a, b],'orange',3, Point(3, 0),5),Point(420,5)),Enum(pygame.K_a,pygame.K_d)))
 
     size=20
     mass.append(Walls_Control(Wall(Physics_polygon(Point(300, 200),

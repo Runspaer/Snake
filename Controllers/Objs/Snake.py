@@ -65,6 +65,12 @@ class Snake(Obj):
         cop.matpov_vel = np.array([[1, 0], [0, 1]], float)
         cop.center-=self.tail[-1].phys.vel
         self.tail.append(Tail(cop))
+        #Прикол
+        # for i in range(10):
+        #     cop = self.tail[-1].phys.copy()
+        #     cop.matpov_vel = np.array([[1, 0], [0, 1]], float)
+        #     cop.center -= self.tail[-1].phys.vel
+        #     self.tail.append(Tail(cop))
 
     def rebound(self,clash_norm):
         self.phys.rebound(clash_norm)

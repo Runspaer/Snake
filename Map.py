@@ -12,9 +12,10 @@ class Map:
                 cl=self.objs[i].is_collision(self.objs[j])#столкнувшиеся объекты и нормаль для первого объекта и для второго
                 if cl:
                     # time.sleep(5)
-                    cl[0].react_on_clash(cl[1],cl[2][0])
-                    cl[1].react_on_clash(cl[0],cl[2][1])
-                    clash_obj.append(cl[0])
-                    clash_obj.append(cl[1])
+                    first_collision_obj,second_collision_obj,first_perp,second_perp=cl
+                    first_collision_obj.react_on_clash(second_collision_obj,first_perp)
+                    second_collision_obj.react_on_clash(first_collision_obj,second_perp)
+                    clash_obj.append(first_collision_obj)
+                    clash_obj.append(second_collision_obj)
         return clash_obj
 
