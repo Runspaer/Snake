@@ -30,3 +30,8 @@ class Snake_Control1(Control):
         self.buttons=buttons
     def tick(self):
         self.objs[0].tick(self.buttons)
+
+class Enum:
+    def __init__(self,left,right):
+        self.left=left
+        self.right=right

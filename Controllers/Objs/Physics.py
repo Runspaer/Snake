@@ -2,15 +2,11 @@ from Controllers.Objs.Geometry import *
 from Controllers.Objs.Plane.Simplex import *
 import math as m
 import numpy as np
+from random import randint
 from pygame import key
 #Тесты
 import time
 
-class Enum:
-    def __init__(self,left,right):
-        self.left=left
-        self.right=right
-#ОООООчень неправильно, но может сработать
 class Side:
     def __init__(self, global_peaks,center):#содержит гольбальные координаты векторов, образующих сторону и центр
         self.global_peaks=global_peaks
@@ -47,10 +43,7 @@ class Physics:
         self.center=center
         self.geom=geom
         self.vel=velocity
-        self.matpov_geom = np.array([[m.cos(m.radians(triangle_geom)), m.sin(m.radians(triangle_geom))],
-                                    [-m.sin(m.radians(triangle_geom)), m.cos(m.radians(triangle_geom))]], float)
-        self.matpov_vel= np.array([[m.cos(m.radians(triangle_vel)), m.sin(m.radians(triangle_vel))],
-                                   [-m.sin(m.radians(triangle_vel)), m.cos(m.radians(triangle_vel))]],float)
+
         #Нужны для точного копирования
         self.triangle_geom=triangle_geom
         self.triangle_vel=triangle_vel
@@ -59,19 +52,23 @@ class Physics:
         self.geom.draw(screen,self.center)
 
     def tick(self,buttons=None):
+        matpov_geom = np.array([[m.cos(m.radians(self.triangle_geom)), m.sin(m.radians(self.triangle_geom))],
+                                     [-m.sin(m.radians(self.triangle_geom)), m.cos(m.radians(self.triangle_geom))]], float)
+        matpov_vel = np.array([[m.cos(m.radians(self.triangle_vel)), m.sin(m.radians(self.triangle_vel))],
+                                    [-m.sin(m.radians(self.triangle_vel)), m.cos(m.radians(self.triangle_vel))]], float)
         if buttons==None:
-            self.vel.x, self.vel.y = np.dot(self.matpov_vel, np.array([self.vel.x, self.vel.y], float))
+            self.vel.x, self.vel.y = np.dot(matpov_vel, np.array([self.vel.x, self.vel.y], float))
             self.center += self.vel
         else:
             keys = pygame.key.get_pressed()
             if keys[buttons.left]:
-                self.vel.x, self.vel.y = np.dot(self.matpov_vel, np.array([self.vel.x, self.vel.y], float))
+                self.vel.x, self.vel.y = np.dot(matpov_vel, np.array([self.vel.x, self.vel.y], float))
 
                 # Альтернативный способ поворота
                 # for i in self.geom.peaks:
                 #     i.x, i.y = np.dot(self.matpov_vel, np.array([i.x, i.y], float))
             if keys[buttons.right]:
-                self.vel.x, self.vel.y = np.dot(np.linalg.inv(self.matpov_vel), np.array([self.vel.x, self.vel.y], float))# пока взял обратную, думаю, что не будет сильно бить по эффективности
+                self.vel.x, self.vel.y = np.dot(np.linalg.inv(matpov_vel), np.array([self.vel.x, self.vel.y], float))# пока взял обратную, думаю, что не будет сильно бить по эффективности
 
                 # Альтернативный способ поворота
                 # for i in self.geom.peaks:
@@ -79,7 +76,10 @@ class Physics:
             self.center += self.vel
         #Поворот
         for i in self.geom.peaks:
-            i.x, i.y = np.dot(self.matpov_geom, np.array([i.x, i.y], float))
+            i.x, i.y = np.dot(matpov_geom, np.array([i.x, i.y], float))
+
+    def tick_no_turn(self):
+        self.center+=self.vel
 
     def copy(self):
         return Physics(self.center.copy(),self.geom.copy(),self.triangle_geom,self.vel.copy(),self.triangle_vel)
@@ -93,7 +93,7 @@ class Physics:
             # Из-за проблемы с коллизией будем выкручиваться, проверяем, что оба объекта не являются кругами,
             # если нашли хотя бы один не круг, то всё хорошо и делаем отражение относительное его стороны, иначе просто делаем отскок на 90 градусов
 
-            if len(self.geom.peaks)!=1 and len(other.geom.peaks)!=1:
+            if len(self.geom.peaks)!=1 or len(other.geom.peaks)!=1:
                 # Выбираем объект с которым будем сталкивать, он не должен быть кругом
                 if len(self.geom.peaks)!=1:
                     colliding_obj = self
@@ -131,9 +131,6 @@ class Physics:
 
             return [-self.vel,-other.vel]
         return False
-
-    def clash(self,other):
-        pass
 
     def support(self, B, direction: Point):
         return self.find_furthest_point(direction) - B.find_furthest_point(-direction)#-r
@@ -196,6 +193,11 @@ class Physics:
         # #Тесты
         print(2*(self.vel.abs()**2),' vel value')
         print(1-m.cos(m.radians(2*a)),' triangle')
+
+        # Ну попробуем решить баг
+        # if (1-m.cos(m.radians(2*a)))==0:
+        #     a=randint(1,89)
+
         d=m.sqrt(2*(self.vel.abs()**2)*(1-m.cos(m.radians(2*a))))
         print(d,'d')
         clash_norm=Point(clash_norm.x*d,clash_norm.y*d)
@@ -205,8 +207,6 @@ class Physics:
         self.vel=self.vel+clash_norm
         print(self.vel.x, self.vel.y, ' vel_new')
         print()
-    def tick_no_turn(self):
-        self.center+=self.vel
 
 
 

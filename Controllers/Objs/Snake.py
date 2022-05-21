@@ -5,10 +5,13 @@ import numpy as np
 import math as m
 from random import randint
 class Snake(Obj):
-    def __init__(self,phys:Physics,score_point:Point):#Возможно будет ошибкой добавлять сюда координаты счётчика, но пусть пока будет так
+    def __init__(self,phys:Physics,score_point:Point,skin=None):#Возможно будет ошибкой добавлять сюда координаты счётчика, но пусть пока будет так
+        if skin!=None:
+            phys.geom.color=skin[0]
         super().__init__(phys)
         self.tail=[]#Tail
         self.score_point=score_point
+        self.skin=skin
 
     def tick(self,buttons):
         # #мем
@@ -46,24 +49,38 @@ class Snake(Obj):
         return False
 
     def eat(self):
+        #Сразу содаём 2 цвета, которые мы поместим в наши новые хвосты
+        color=[]
+        # По стандарту просто рандом
+        if self.skin==None:
+            for i in range(2):
+                color.append((randint(1,255),randint(1,255),randint(1,255)))
+        else:
+            color.append(self.skin[(len(self.tail)+1)%len(self.skin)])#+1, так как первый цвет будет у головы
+            color.append(self.skin[(len(self.tail)+1) % len(self.skin)])
 
         if not self.tail:
             cop=self.phys.copy()
-            cop.matpov_vel=np.array([[1,0],[0, 1]], float)
+            cop.triangle_vel=0
             cop.center-=self.phys.vel
-            cop.geom.color=(randint(1,255),randint(1,255),randint(1,255))
+            cop.geom.color=color[0]
             self.tail.append(Tail(cop))##Интересная проблема с указателями в питоне, нужно будет рассказать
 
         else:
+            # Яблоки поворота
+            for i in self.tail:
+                i.phys.triangle_geom+=1
+
             cop = self.tail[-1].phys.copy()
-            cop.matpov_vel = np.array([[1, 0], [0, 1]], float)
+            cop.triangle_vel = 0
             cop.center -= self.tail[-1].phys.vel
-            cop.geom.color = (randint(1, 255), randint(1, 255), randint(1, 255))
+            cop.geom.color = color[0]
             self.tail.append(Tail(cop))
 
         cop=self.tail[-1].phys.copy()
         cop.matpov_vel = np.array([[1, 0], [0, 1]], float)
         cop.center-=self.tail[-1].phys.vel
+        cop.geom.color = color[1]
         self.tail.append(Tail(cop))
         #Прикол
         # for i in range(10):
@@ -84,6 +101,9 @@ class Snake(Obj):
 
     def react_on_clash(self,other,clash_norm):
         if type(other)==Apple:
+            # Яблоки поворота
+            self.phys.triangle_geom += 1
+
             self.eat()
         if type(other)==Wall:
             self.rebound(clash_norm)

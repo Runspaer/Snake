@@ -17,9 +17,6 @@ class Obj:
         pass
     def tick_no_turn(self):
         self.phys.tick_no_turn()
-    #     if self.phys.is_collision(other):
-    #         return True
-    #     return False
 
 class Tail(Obj):
     def copy(self):
@@ -37,7 +34,9 @@ class Apple(Obj):
     def react_on_clash(self,other,clash_norm):#Умирает
         self.is_visibl=False
     def is_collision(self,other):
-        return other.is_collision(self)
+        if type(other)!=Apple:
+            return other.is_collision(self)
+        return False
     #def collision(self,head,screen_size):
     #    for i in range(len(self.vec)):
     #        if (((self.vec[i].beg[0]-head.beg[0])**2+(self.vec[i].beg[1]-head.beg[1])**2)**0.5)<=(self.vec[i].size()+head.size()):
