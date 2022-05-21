@@ -1,6 +1,6 @@
 from Map import *
 #Плохая идея, но пока сделаю так
-from Controllers.Objs.Snake import *
+from Controllers.Control import Apples_Control
 
 from random import randrange
 class Engine:
@@ -12,6 +12,7 @@ class Engine:
         clash_obj=self.map.collision()
         for i in clash_obj:
             if not i.is_visibl:
-                if type(i)==Apple:#Пусть лучше у меня будет яблоко перемещаться, так как иначе придётся кидывать ссылку на класс яблок и будет неудобно работать
-                    i.phys.center=Point(randrange(i.phys.geom.peaks[0].abs()+5, self.screen_size[0]-(i.phys.geom.peaks[0].abs()+5), 20),
-                                             randrange(i.phys.geom.peaks[0].abs()+5, self.screen_size[1]-(i.phys.geom.peaks[0].abs()+5), 20))
+                for j in self.map.objs:
+                    if type(j)==Apples_Control:
+                        if j.find_and_spawn(i,self.screen_size):
+                            break

@@ -42,10 +42,6 @@ class Snake(Obj):
         clash_perp=self.phys.is_collision(other.phys)
         if clash_perp:
             return clash_perp
-        # for i in self.tail:
-        #     clash_perp=i.phys.is_collision(other.phys)
-        #     if clash_perp:
-        #         return clash_perp
         return False
 
     def eat(self):
@@ -68,8 +64,8 @@ class Snake(Obj):
 
         else:
             # Яблоки поворота
-            for i in self.tail:
-                i.phys.triangle_geom+=1
+            # for i in self.tail:
+            #     i.phys.triangle_geom+=1
 
             cop = self.tail[-1].phys.copy()
             cop.triangle_vel = 0
@@ -102,7 +98,7 @@ class Snake(Obj):
     def react_on_clash(self,other,clash_norm):
         if type(other)==Apple:
             # Яблоки поворота
-            self.phys.triangle_geom += 1
+            #self.phys.triangle_geom += 1
 
             self.eat()
         if type(other)==Wall:

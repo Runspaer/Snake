@@ -1,3 +1,6 @@
+from Controllers.Objs.Plane.Point import *
+from random import randrange
+
 class Control:
     def __init__(self,objs):
         if type(objs)==list:
@@ -19,7 +22,17 @@ class Control:
         return False
 
 class Apples_Control(Control):
-    pass
+    def find_and_spawn(self,apple,screen_size):
+        for i in range(len(self.objs)):
+            if self.objs[i]==apple:
+                self.objs.append(self.spawn(apple,screen_size))
+                self.objs.pop(i)
+                return True
+        return False
+    def spawn(self,apple,screen_size):
+        max_x,max_y=apple.give_max_distance()
+        apple.phys.center=Point(randrange(max_x+5, screen_size[0]-(max_x+5), 20),randrange(max_y+5, screen_size[1]-(max_x+5), 20))
+        return apple
 
 class Walls_Control(Control):
     pass

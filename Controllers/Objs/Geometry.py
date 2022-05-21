@@ -1,3 +1,5 @@
+import math
+
 import pygame
 from Controllers.Objs.Plane.Point import *
 
@@ -17,18 +19,6 @@ class Geometry:
     def give_side(self):
         return [self.peaks[(i+1)%len(self.peaks)] - self.peaks[i] for i in range(len(self.peaks))]
 
-
-
-class Geometry_circle(Geometry):
-    def draw(self,screen,center):
-        pygame.draw.circle(screen, self.color, (center.x, center.y), self.peaks[0].abs())
-    def copy(self):
-        cop = []
-        for i in self.peaks:
-            cop.append(i.copy())
-        return Geometry_circle(cop,self.color)
-
-
 class Geometry_polygon(Geometry):
     def draw(self, screen,center):
         coord=self.give_gl_peaks(center)
@@ -39,3 +29,20 @@ class Geometry_polygon(Geometry):
         for i in self.peaks:
             cop.append(i.copy())
         return Geometry_polygon(cop,self.color)
+
+
+class Geometry_circle(Geometry_polygon):
+    def __init__(self,R,k_partitions,color):
+        self.R=R
+        self.k_partitions=k_partitions
+        peaks=[]
+        for i in range(k_partitions):
+            peaks.append(Point(R*math.cos(math.radians((i+1)*360/k_partitions)),R*math.sin(math.radians((i+1)*360/k_partitions))))
+
+        super().__init__(peaks,color)
+
+    def copy(self):
+        cop = []
+        for i in self.peaks:
+            cop.append(i.copy())
+        return Geometry_circle(self.R,self.k_partitions,self.color)

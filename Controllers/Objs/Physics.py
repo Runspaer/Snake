@@ -8,13 +8,13 @@ from pygame import key
 import time
 
 class Side:
-    def __init__(self, global_peaks,center):#содержит гольбальные координаты векторов, образующих сторону и центр
+    def __init__(self, global_peaks,center):# содержит глобальные координаты векторов, образующих сторону и центр
         self.global_peaks=global_peaks
         self.center=center
     def find_furthest_point(self, direction: Point):
         pointers = self.global_peaks
         max_point = Point(0, 0)
-        max_r = -10000000000000000000
+        max_r = -10000000000000000000 # Инициализировать первым из массива
         for i in pointers:
             if i * direction > max_r:
                 max_r = i * direction
@@ -52,6 +52,9 @@ class Physics:
         self.geom.draw(screen,self.center)
 
     def tick(self,buttons=None):
+        # print()
+        # print(np.array([[m.cos(m.radians(self.triangle_geom)), m.sin(m.radians(self.triangle_geom))],
+        #                              [-m.sin(m.radians(self.triangle_geom)), m.cos(m.radians(self.triangle_geom))]],float).np.round(3))
         matpov_geom = np.array([[m.cos(m.radians(self.triangle_geom)), m.sin(m.radians(self.triangle_geom))],
                                      [-m.sin(m.radians(self.triangle_geom)), m.cos(m.radians(self.triangle_geom))]], float)
         matpov_vel = np.array([[m.cos(m.radians(self.triangle_vel)), m.sin(m.radians(self.triangle_vel))],
@@ -84,8 +87,15 @@ class Physics:
     def copy(self):
         return Physics(self.center.copy(),self.geom.copy(),self.triangle_geom,self.vel.copy(),self.triangle_vel)
 
-    def find_furthest_point(self, direction:Point):
-        pass
+    def find_furthest_point(self, direction: Point):
+        pointers = self.geom.give_gl_peaks(self.center)
+        max_point = Point(0, 0)
+        max_r = -10000000000000000000
+        for i in pointers:
+            if i * direction > max_r:
+                max_r = i * direction
+                max_point = i
+        return max_point
 
     def is_collision(self,other):
         if self.GJK(other):
@@ -196,7 +206,7 @@ class Physics:
 
         # Ну попробуем решить баг
         # if (1-m.cos(m.radians(2*a)))==0:
-        #     a=randint(1,89)
+        #      a=0
 
         d=m.sqrt(2*(self.vel.abs()**2)*(1-m.cos(m.radians(2*a))))
         print(d,'d')
@@ -212,32 +222,15 @@ class Physics:
 
 
 class Physics_circle(Physics):
-    def __init__(self,center:Point,peaks,color,triangle_geom,velocity,triangle_vel):
-        super().__init__(center,Geometry_circle(peaks,color),triangle_geom,velocity,triangle_vel)
-
-    def find_furthest_point(self, direction:Point):
-        angle=m.atan2(direction.y, direction.x)# арктангенс y/x в радианах
-        return Point(self.center.x + (self.geom.peaks[0].abs() * m.cos(angle)),self.center.y + (self.geom.peaks[0].abs() * m.sin(angle)))
+    def __init__(self,center:Point,R,k_partitions,color,triangle_geom,velocity,triangle_vel):
+        super().__init__(center,Geometry_circle(R,k_partitions,color),triangle_geom,velocity,triangle_vel)
 
     def copy(self):
-        cop=[]
-        for i in self.geom.peaks:
-            cop.append(i.copy())
-        return Physics_circle(self.center.copy(),cop,self.geom.color,self.triangle_geom,self.vel.copy(),self.triangle_vel)
+        return Physics_circle(self.center.copy(),self.geom.R,self.geom.k_partitions, self.geom.color,self.triangle_geom,self.vel.copy(),self.triangle_vel)
 
 class Physics_polygon(Physics):
     def __init__(self,center:Point,peaks,color,triangle_geom,velocity,triangle_vel):
         super().__init__(center,Geometry_polygon(peaks,color),triangle_geom,velocity,triangle_vel)
-
-    def find_furthest_point(self, direction:Point):
-        pointers=self.geom.give_gl_peaks(self.center)
-        max_point = Point(0,0)
-        max_r = -10000000000000000000
-        for i in pointers:
-            if i * direction > max_r:
-                max_r = i * direction
-                max_point = i
-        return max_point
 
     def give_clash_norm(self):# в будущем можно будет находить вектор, где произошло стокновение и возвращать его
         return [(self.geom.give_gl_peaks(self.center)[0]-self.geom.give_gl_peaks(self.center)[1]).norm(),

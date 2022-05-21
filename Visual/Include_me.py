@@ -3,7 +3,13 @@ import pygame
 from Controllers.Control import *
 from Controllers.Objs.Snake import *
 
-def include_objs(screen_size:list):
+
+def include_objs():
+    #Параметры экрана
+    # screen_size = [1800, 1000]
+    screen_size = [500, 500]
+
+
     color=None
     #Russia
     Russia=[(240, 255, 255),(0, 82, 255),(255, 9, 47)]
@@ -47,7 +53,8 @@ def include_objs(screen_size:list):
     mass=[]
     # мем
     for i in range(1):
-        mass.append(Apples_Control(Apple(Physics_circle(Point(50,50),[Point(10,0)],'red',0,Point(0,0),0))))
+        mass.append(Apples_Control([Apple(Physics_circle(Point(50,50),10,16,'red',0,Point(0,0),0)),Apple(Physics_circle(Point(50,50),10,16,'red',0,Point(0,0),0))]))
+        #mass.append(Apples_Control(Apple(Physics_polygon(Point(50,50), [Point(-10,10),Point(10,10),Point(10,-10),Point(-10,-10)],'red',0,Point(0,0),0))))
 
 
     # mass.append(Snake(Physics_circle(Point(screen_size[0]//2,screen_size[1]//2),[Point(15,0)],'green'),Point(2,0)))
@@ -64,7 +71,7 @@ def include_objs(screen_size:list):
     #Кривая квадратная змея
     mass.append(Snake_Control1(Snake(Physics_polygon(Point(screen_size[0] // 2, screen_size[1] // 2),
                                                      [Point(-20, 20), Point(6, 20), Point(6, -20), Point(-20, -20)]
-                                                     , 'green', 0, Point(6, 0), 6), Point(10, 450),colorR),
+                                                     , 'green', 1, Point(3, 0), 2), Point(10, 450),colorR),
                                Enum(pygame.K_LEFT, pygame.K_RIGHT)))
 
     # triangle Snake
@@ -81,6 +88,9 @@ def include_objs(screen_size:list):
     #             [Point(-20, -5),Point(-10,-11),Point(-5, -20),Point(0, -15), Point(7, 4), Point(0, 15)]
     #             , 'green', 10, Point(8, 0), 6), Point(5, 5),color),
     #             Enum(pygame.K_LEFT, pygame.K_RIGHT)))
+
+    #Круглая Змея
+    # mass.append(Snake_Control1(Snake(Physics_circle(Point(50,50),20,16,'red',0,Point(3,0),2),Point(5,5),color),Enum(pygame.K_LEFT,pygame.K_RIGHT)))
 
 
 
@@ -128,4 +138,4 @@ def include_objs(screen_size:list):
     # mass.append(Obj.Size_wall(Point(screen_size[0]-1, screen_size[1] / 2), Point(0, 0), 'blue', 0, screen_size[1] / 2-1,Point(0,0)))#Правая стена
     # mass.append(Obj.Size_wall(Point(screen_size[0]/2, 1), Point(0, 0), 'blue', screen_size[0] / 2, 0,Point(0,1)))#Верхняя стена
     # mass.append(Obj.Size_wall(Point(screen_size[0] / 2, screen_size[1]-1), Point(0, 0), 'blue', screen_size[0] / 2, 0,Point(0,0)))#Нижняя стена
-    return mass
+    return [mass,screen_size]

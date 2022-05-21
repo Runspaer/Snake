@@ -1,5 +1,7 @@
 from random import randrange
 from Controllers.Objs.Physics import *
+#Тесты
+import time
 
 class Obj:
     def __init__(self,phys:Physics):
@@ -13,8 +15,6 @@ class Obj:
         pass
     def copy(self):
         return Obj(self.phys.copy())
-    def is_collision(self,other):
-        pass
     def tick_no_turn(self):
         self.phys.tick_no_turn()
 
@@ -31,17 +31,18 @@ class Wall(Obj):
         #self.phys.rebound(clash_norm)
 
 class Apple(Obj):
+    def copy(self):
+        return Apple(self.phys.copy())
+
     def react_on_clash(self,other,clash_norm):#Умирает
         self.is_visibl=False
-    def is_collision(self,other):
-        if type(other)!=Apple:
-            return other.is_collision(self)
-        return False
-    #def collision(self,head,screen_size):
-    #    for i in range(len(self.vec)):
-    #        if (((self.vec[i].beg[0]-head.beg[0])**2+(self.vec[i].beg[1]-head.beg[1])**2)**0.5)<=(self.vec[i].size()+head.size()):
-    #            self.vec.pop(i)
-    #            beg=[randrange(0, screen_size[0], 20), randrange(0, screen_size[1], 20)]
-    #            self.vec.append(Vector(beg, [beg[0]+10,beg[1]]))
-    #            return 0
-    #        return 1
+
+    def give_max_distance(self):
+        peaks=self.phys.geom.peaks
+        max_x=abs(peaks[0].x)
+        max_y=abs(peaks[0].y)
+
+        for i in peaks:
+            if abs(i.x)>max_x: max_x=abs(i.x)
+            if abs(i.y)>max_y: max_y=abs(i.y)
+        return [max_x,max_y]

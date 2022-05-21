@@ -6,9 +6,8 @@ from Visual.include_me import *
 
 class Controller:
     def __init__(self):
-        screen_size = [500, 500]
+        objs,screen_size = include_objs()
         self.ui = UI(screen_size)
-        objs = include_objs(screen_size)
 
         self.engine = Engine(screen_size, Map(objs))
 
