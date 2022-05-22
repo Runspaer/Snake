@@ -28,7 +28,7 @@ class Wall(Obj):
         #self.sight=sight#Обозначает сдвиг изображения
     def react_on_clash(self,other,clash_norm):
         pass
-        #self.phys.rebound(clash_norm)
+        # self.phys.rebound(clash_norm)
 
 class Apple(Obj):
     def copy(self):

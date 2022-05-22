@@ -8,7 +8,7 @@ from pygame import key
 import time
 
 class Side:
-    def __init__(self, global_peaks,center):# содержит глобальные координаты векторов, образующих сторону и центр
+    def __init__(self, global_peaks,center):# содержит глобальные координаты векторов, образующих сторону, и центр
         self.global_peaks=global_peaks
         self.center=center
     def find_furthest_point(self, direction: Point):
@@ -26,7 +26,10 @@ class Side:
         ab = b - a
         abPerp = ab.perp()
         ao= self.center - a
-
+        print()
+        print(ao.x,ao.y,'aaaaaaaaaaaaaaaaaaaao')
+        print(colliding_obj_vel.x,colliding_obj_vel.y)
+        print()
         # Проверяем направление перпендикуляра, он должен
         # быть направлен против фигуры
         if abPerp * ao >= 0:
@@ -100,46 +103,58 @@ class Physics:
     def is_collision(self,other):
         if self.GJK(other):
             collision_pointers=self.GJK(other)
-            # Из-за проблемы с коллизией будем выкручиваться, проверяем, что оба объекта не являются кругами,
-            # если нашли хотя бы один не круг, то всё хорошо и делаем отражение относительное его стороны, иначе просто делаем отскок на 90 градусов
+            #Тесты
+            col=[]
 
-            if len(self.geom.peaks)!=1 or len(other.geom.peaks)!=1:
-                # Выбираем объект с которым будем сталкивать, он не должен быть кругом
-                if len(self.geom.peaks)!=1:
-                    colliding_obj = self
-                    clash_obj=other
-                    collision_peaks = collision_pointers[1]
-                else:
-                    colliding_obj = other
-                    clash_obj=self
-                    collision_peaks = collision_pointers[0]
-                print(colliding_obj)
+            colliding_obj = self
+            clash_obj=other
+            collision_peaks = collision_pointers[1]
 
                 #Теперь мы проходим составляем из точек стороны фигуры, чтобы понять, с какой именно стороной произошло пересечение.
                 #У нас будет три варианта для сторон
 
-                for i in range(3):#Так как у нас всегда функция возвращает 3 точки
+            for i in range(3):#Так как у нас всегда функция возвращает 3 точки
                     # Создаём сторону и проверяем, что найденная сторона действительно является частью фигуры
 
-                    colisiion_Side=Side([collision_peaks[i],collision_peaks[(i+1)%3]],clash_obj.center)#%3 так как длина 3
-                    side=collision_peaks[i]-collision_peaks[(i+1)%3]
+                colisiion_Side=Side([collision_peaks[i],collision_peaks[(i+1)%3]],clash_obj.center)#%3 так как длина 3
+                side=collision_peaks[i]-collision_peaks[(i+1)%3]
 
-                    flag=False
-                    for j in clash_obj.geom.give_side():
-                        if (side.x==j.x and side.y==j.y) or (-side.x==j.x and -side.y==j.y):
-                            flag=True
-                            break
-                    if flag:
-                        #Проверяем пересечение
-                        if colliding_obj.GJK(colisiion_Side):
-                            collision_perp = colisiion_Side.perp_outside(colliding_obj.vel)
-                            if collision_perp:
+                flag=False
+                print(side.x,side.y)
+                for j in clash_obj.geom.give_side():
+                    print(j.x,j.y,'fig')
+                    #Добавлено, так как порой последние символы считаются неправильно
+                    if (round(side.x,10)==round(j.x,10) and round(side.y,10)==round(j.y,10)) or (round(-side.x,10)==round(j.x,10) and round(-side.y,10)==round(j.y,10)):
+                        flag=True
+                        break
 
-                                if self==colliding_obj:
-                                    return [collision_perp,-collision_perp]
-                                return [-collision_perp,collision_perp]
+                if flag:
+                    #Проверяем пересечение
+                    if colliding_obj.GJK(colisiion_Side):
+                        print('yes')
+                        collision_perp = colisiion_Side.perp_outside(colliding_obj.vel)
+                        if collision_perp:
+                            col.append(collision_perp)
+                            #return [collision_perp,-collision_perp]
+            min=100000000000000
+            perp=[]
+            if len(col)==2:
+                for i in col:
+                    if colliding_obj.center.ro(i)<min:
+                        min=colliding_obj.center.ro(i)
+                        perp=[i,-i]
+                return perp
+            else:
+                if len(col)==1:
+                    return [col[0],-col[0]]
+                # Может получиться так, что объект догонит змею, т.е. змея отразилась, но так как объект крутиться
+                # , то в следующем кадре он догонит змею и тогда происходит непонятное поведение
+                else:
+                    # Небольшие костыли, фигура при таком варианте просто начнёт вращаться и ехать в другую сторону
 
-            return [-self.vel,-other.vel]
+                    clash_obj.triangle_geom=-clash_obj.triangle_geom
+                    clash_obj.triangle_vel = -clash_obj.triangle_vel
+                    return False
         return False
 
     def support(self, B, direction: Point):

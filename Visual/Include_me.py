@@ -53,26 +53,29 @@ def include_objs():
     mass=[]
     # мем
     for i in range(1):
-        mass.append(Apples_Control([Apple(Physics_circle(Point(50,50),10,16,'red',0,Point(0,0),0)),Apple(Physics_circle(Point(50,50),10,16,'red',0,Point(0,0),0))]))
-        #mass.append(Apples_Control(Apple(Physics_polygon(Point(50,50), [Point(-10,10),Point(10,10),Point(10,-10),Point(-10,-10)],'red',0,Point(0,0),0))))
+        # mass.append(Apples_Control([Apple(Physics_circle(Point(50, 50), 30, 8, 'red', 0, Point(0, 0), 0)),
+        #                             Apple(Physics_circle(Point(50, 50), 30, 8, 'red', 0, Point(0, 0), 0))]))
+
+        #mass.append(Apples_Control([Apple(Physics_circle(Point(50,50),10,3,'red',0,Point(0,0),0)),Apple(Physics_circle(Point(50,50),10,16,'red',0,Point(0,0),0))]))
+        mass.append(Apples_Control(Apple(Physics_polygon(Point(50,50), [Point(-10,10),Point(10,10),Point(10,-10),Point(-10,-10)],'red',0,Point(0,0),0))))
 
 
     # mass.append(Snake(Physics_circle(Point(screen_size[0]//2,screen_size[1]//2),[Point(15,0)],'green'),Point(2,0)))
     # mass.append(Apple(Physics_circle(Point(50,50),[Point(10,0)],'red'),Point(0,0)))
     # circle Snake
     # mass.append(Snake_Control1(Snake(Physics_circle(Point(screen_size[0]//2,screen_size[1]//2),[Point(15,0)]
-    #                                                   ,'green',0,Point(5,0),5),Point(5,5)),Enum(pygame.K_LEFT,pygame.K_RIGHT)))
+    #                                                   ,'green',0,Point(5,0),5),Point(5,5)),Buttons(pygame.K_LEFT,pygame.K_RIGHT)))
 
 
     # Квадратная
     # mass.append(Snake_Control1(Snake(Physics_polygon(Point(screen_size[0]//2,screen_size[1]//2),[Point(-10,10),Point(10,10),Point(10,-10),Point(-10,-10)]
-    #                                                 ,'green',2,Point(4,0),5),Point(5,5)),Enum(pygame.K_q,pygame.K_a)))
+    #                                                 ,'green',2,Point(4,0),5),Point(5,5)),Buttons(pygame.K_q,pygame.K_a)))
 
     #Кривая квадратная змея
     mass.append(Snake_Control1(Snake(Physics_polygon(Point(screen_size[0] // 2, screen_size[1] // 2),
                                                      [Point(-20, 20), Point(6, 20), Point(6, -20), Point(-20, -20)]
-                                                     , 'green', 1, Point(3, 0), 2), Point(10, 450),colorR),
-                               Enum(pygame.K_LEFT, pygame.K_RIGHT)))
+                                                     , 'green', 1, Point(10, 0), 2), Point(10, 450),colorR),
+                               Buttons(pygame.K_LEFT, pygame.K_RIGHT)))
 
     # triangle Snake
     # a=Point(0,0)
@@ -81,16 +84,16 @@ def include_objs():
     # b.x,b.y=np.dot(np.array([[m.cos(m.radians(120)),m.sin(m.radians(120))], [-m.sin(m.radians(120)), m.cos(m.radians(120))]],float),np.array([0,-10],float))
     # mass.append(Snake_Control1(Snake(Physics_polygon(Point(randrange(5, screen_size[0]-5, 20),
     #                                          randrange(5, screen_size[1]-5)),
-    # [Point(0, -10), a, b],(0,255,0),3, Point(4, 0),5),Point(420,5),colorBee),Enum(pygame.K_v,pygame.K_b)))
+    # [Point(0, -10), a, b],(0,255,0),3, Point(4, 0),5),Point(420,5),colorBee),Buttons(pygame.K_v,pygame.K_b)))
 
     # Что-то
     # mass.append(Snake_Control1(Snake(Physics_polygon(Point(screen_size[0] // 2, screen_size[1] // 2),
     #             [Point(-20, -5),Point(-10,-11),Point(-5, -20),Point(0, -15), Point(7, 4), Point(0, 15)]
     #             , 'green', 10, Point(8, 0), 6), Point(5, 5),color),
-    #             Enum(pygame.K_LEFT, pygame.K_RIGHT)))
+    #             Buttons(pygame.K_LEFT, pygame.K_RIGHT)))
 
     #Круглая Змея
-    # mass.append(Snake_Control1(Snake(Physics_circle(Point(50,50),20,16,'red',0,Point(3,0),2),Point(5,5),color),Enum(pygame.K_LEFT,pygame.K_RIGHT)))
+    # mass.append(Snake_Control1(Snake(Physics_circle(Point(50,50),20,16,'red',0,Point(3,0),2),Point(5,5),color),Buttons(pygame.K_LEFT,pygame.K_RIGHT)))
 
 
 
@@ -119,7 +122,7 @@ def include_objs():
     # # #
     # mass.append(Snake.Snake(Point(screen_size[0]//2,screen_size[1]//2),Point(2,0),'green',15,[]))
     # mass.append(Apple.Apple(Point(50,50),Point(0,0),'red',10))
-    weight=5
+    weight=100
     mass.append(Walls_Control(Wall(Physics_polygon(Point(-weight, screen_size[1] / 2),
                                                     [Point(weight+1, screen_size[1] / 2), Point(weight+1, -screen_size[1] / 2), Point(-weight-1, -screen_size[1] / 2),Point(-weight-1, screen_size[1] / 2)],
                                                     'blue', 0, Point(0, 0), 0))))#Левая стена

@@ -27,6 +27,9 @@ class Snake(Obj):
             self.tail[0].phys.vel = self.phys.vel.copy()# Помни про указатели
         else:
             self.phys.tick(buttons)
+        # # Тесты
+        # print(self.phys.vel.x, self.phys.vel.y)
+        # time.sleep(0.01)
 
 
     def draw(self,screen):
