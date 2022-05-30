@@ -1,3 +1,0 @@
-Physics;center;geom,triangle_geom,velocity,triangle_vel
-circle;Point(50,50);10;3;'red';0;Point(0,0);0
-circle;Point(50,50);10;16;'red';0;Point(0,0);0

@@ -1,11 +1,8 @@
 from Controllers.Objs.Geometry import *
 from Controllers.Objs.Plane.Simplex import *
-import math as m
 import numpy as np
 from random import randint
 from pygame import key
-#Тесты
-import time
 
 class Side:
     def __init__(self, global_peaks,center):# содержит глобальные координаты векторов, образующих сторону, и центр
@@ -26,10 +23,7 @@ class Side:
         ab = b - a
         abPerp = ab.perp()
         ao= self.center - a
-        print()
-        print(ao.x,ao.y,'aaaaaaaaaaaaaaaaaaaao')
-        print(colliding_obj_vel.x,colliding_obj_vel.y)
-        print()
+
         # Проверяем направление перпендикуляра, он должен
         # быть направлен против фигуры
         if abPerp * ao >= 0:
@@ -55,13 +49,10 @@ class Physics:
         self.geom.draw(screen,self.center)
 
     def tick(self,buttons=None):
-        # print()
-        # print(np.array([[m.cos(m.radians(self.triangle_geom)), m.sin(m.radians(self.triangle_geom))],
-        #                              [-m.sin(m.radians(self.triangle_geom)), m.cos(m.radians(self.triangle_geom))]],float).np.round(3))
-        matpov_geom = np.array([[m.cos(m.radians(self.triangle_geom)), m.sin(m.radians(self.triangle_geom))],
-                                     [-m.sin(m.radians(self.triangle_geom)), m.cos(m.radians(self.triangle_geom))]], float)
-        matpov_vel = np.array([[m.cos(m.radians(self.triangle_vel)), m.sin(m.radians(self.triangle_vel))],
-                                    [-m.sin(m.radians(self.triangle_vel)), m.cos(m.radians(self.triangle_vel))]], float)
+        matpov_geom = np.array([[np.cos(np.radians(self.triangle_geom)), np.sin(np.radians(self.triangle_geom))],
+                                     [-np.sin(np.radians(self.triangle_geom)), np.cos(np.radians(self.triangle_geom))]], float)
+        matpov_vel = np.array([[np.cos(np.radians(self.triangle_vel)), np.sin(np.radians(self.triangle_vel))],
+                                    [-np.sin(np.radians(self.triangle_vel)), np.cos(np.radians(self.triangle_vel))]], float)
         if buttons==None:
             self.vel.x, self.vel.y = np.dot(matpov_vel, np.array([self.vel.x, self.vel.y], float))
             self.center += self.vel
@@ -120,9 +111,9 @@ class Physics:
                 side=collision_peaks[i]-collision_peaks[(i+1)%3]
 
                 flag=False
-                print(side.x,side.y)
+                # print(side.x,side.y)
                 for j in clash_obj.geom.give_side():
-                    print(j.x,j.y,'fig')
+                    # print(j.x,j.y,'fig')
                     #Добавлено, так как порой последние символы считаются неправильно
                     if (round(side.x,10)==round(j.x,10) and round(side.y,10)==round(j.y,10)) or (round(-side.x,10)==round(j.x,10) and round(-side.y,10)==round(j.y,10)):
                         flag=True
@@ -131,7 +122,7 @@ class Physics:
                 if flag:
                     #Проверяем пересечение
                     if colliding_obj.GJK(colisiion_Side):
-                        print('yes')
+                        # print('yes')
                         collision_perp = colisiion_Side.perp_outside(colliding_obj.vel)
                         if collision_perp:
                             col.append(collision_perp)
@@ -151,9 +142,12 @@ class Physics:
                 # , то в следующем кадре он догонит змею и тогда происходит непонятное поведение
                 else:
                     # Небольшие костыли, фигура при таком варианте просто начнёт вращаться и ехать в другую сторону
-
-                    clash_obj.triangle_geom=-clash_obj.triangle_geom
-                    clash_obj.triangle_vel = -clash_obj.triangle_vel
+                    if clash_obj.vel.x==0 and clash_obj.vel.y==0:
+                        clash_obj.triangle_geom=-clash_obj.triangle_geom
+                    else:
+                        clash_obj.vel=-clash_obj.vel
+                        clash_obj.triangle_vel = -clash_obj.triangle_vel
+                    # clash_obj.tick()
                     return False
         return False
 
@@ -182,56 +176,22 @@ class Physics:
                 return False
             simplex.push_back(support,self.find_furthest_point(direction),B.find_furthest_point(-direction))
             direction = simplex.CalculateDirection()
-        # #Тесты
-        # for i in range(len(collision_pointers)):
-        #     print(collision_pointers[i].x,collision_pointers[i].y)
-        #     #print((collision_pointers[i]-collision_pointers[(i+1)%3]).x,(collision_pointers[i]-collision_pointers[(i+1)%3]).y)
-        # print('pointers','\n')
-        # for i in self.geom.give_gl_peaks(self.center):
-        #     print(i.x,i.y)
-        # print('peaks','\n')
-        #Объекты столкнулись и мы знаем точки, которые участвовали в вычислении столкновений
-        # #Тесты
-        # print(collision_pointers_first[0].x,collision_pointers_first[0].y,'aaaaaa')
-        # print(collision_pointers_second[0].x, collision_pointers_second[0].y, 'aaaaaa')
-        # time.sleep(5)
+
         return [simplex.collision_pointers_first,simplex.collision_pointers_second]
 
     def rebound(self,clash_norm):
-        # print(clash_norm.x,clash_norm.y)
+
         clash_norm=Point(clash_norm.x/clash_norm.abs(), clash_norm.y/clash_norm.abs())
-        print(clash_norm.x, clash_norm.y,' norm')
-        #
-        # self.vel+=i
-        # self.center -= Point(self.vel.x * 10, self.vel.y * 10)
-        # #Тесты
-        # print(i.x, i.y)
-        # print(self.vel.x, self.vel.y)
+
         if abs(((clash_norm * self.vel) / (self.vel.abs())))>1:
-            a = m.degrees(m.acos(-1))
+            a = np.degrees(np.arccos(-1))
         else:
-            a = m.degrees(
-                m.acos((clash_norm * self.vel) / (self.vel.abs()))) - 90  # угол в градусах
-        # if a<0:
-        #     print(a,clash_norm.x,clash_norm.y)
-        #     time.sleep(20)
-        # #Тесты
-        print(2*(self.vel.abs()**2),' vel value')
-        print(1-m.cos(m.radians(2*a)),' triangle')
+            a = np.degrees(
+                np.arccos((clash_norm * self.vel) / (self.vel.abs()))) - 90  # угол в градусах
 
-        # Ну попробуем решить баг
-        # if (1-m.cos(m.radians(2*a)))==0:
-        #      a=0
-
-        d=m.sqrt(2*(self.vel.abs()**2)*(1-m.cos(m.radians(2*a))))
-        print(d,'d')
+        d=np.sqrt(2*(self.vel.abs()**2)*(1-np.cos(np.radians(2*a))))
         clash_norm=Point(clash_norm.x*d,clash_norm.y*d)
-        print(clash_norm.x, clash_norm.y,' new_norm')
-        print(self.vel.x,self.vel.y,' vel_old')
-        #time.sleep(2)
         self.vel=self.vel+clash_norm
-        print(self.vel.x, self.vel.y, ' vel_new')
-        print()
 
 
 
@@ -246,11 +206,6 @@ class Physics_circle(Physics):
 class Physics_polygon(Physics):
     def __init__(self,center:Point,peaks,color,triangle_geom,velocity,triangle_vel):
         super().__init__(center,Geometry_polygon(peaks,color),triangle_geom,velocity,triangle_vel)
-
-    def give_clash_norm(self):# в будущем можно будет находить вектор, где произошло стокновение и возвращать его
-        return [(self.geom.give_gl_peaks(self.center)[0]-self.geom.give_gl_peaks(self.center)[1]).norm(),
-                (self.geom.give_gl_peaks(self.center)[1]-self.geom.give_gl_peaks(self.center)[0]).norm()]
-        #пока не переделал эту часть под задание по часовой стрелке
 
     def copy(self):
         cop = []

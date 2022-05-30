@@ -1,0 +1,2 @@
+center_first_coord;center_second_coord;geom;color;triangle_geom;velocity_first_coord;velocity_second_coord;triangle_vel
+50;50;-20,20,20,20,20,-20,-20,-20;red;0;0;0;0
