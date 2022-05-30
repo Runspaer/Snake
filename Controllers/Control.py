@@ -4,7 +4,7 @@ from Controllers.Objs.Obj import *
 from random import randrange
 
 class Control:
-    def __init__(self,objs,regular_csv=None,circle_csv=None):
+    def __init__(self,objs,regular_csv=None):
         if type(objs)==list:
             self.objs=objs
         else:
@@ -20,6 +20,13 @@ class Control:
             i.draw(screen)
     def read_csv(self,name_regular_csv):
         pass
+    def is_collision(self, other):
+        for i in self.objs:
+            for j in other.objs:
+                clash_perp=i.is_collision(j)
+                if clash_perp:
+                    return [i,j,clash_perp[0],clash_perp[1]]
+        return False
 
 class Apples_Control(Control):
     def find_and_spawn(self,apple,screen_size):
@@ -75,13 +82,6 @@ class Snake_Control1(Control):
     def tick(self):
         for i in self.objs:
             i.tick(self.buttons)
-    def is_collision(self, other):
-        for i in self.objs:
-            for j in other.objs:
-                clash_perp=i.is_collision(j)
-                if clash_perp:
-                    return [i,j,clash_perp[0],clash_perp[1]]
-        return False
 
 class Buttons:
     def __init__(self,left,right):

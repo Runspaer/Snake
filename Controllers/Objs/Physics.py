@@ -1,8 +1,6 @@
 from Controllers.Objs.Geometry import *
 from Controllers.Objs.Plane.Simplex import *
 import numpy as np
-from random import randint
-from pygame import key
 
 class Side:
     def __init__(self, global_peaks,center):# содержит глобальные координаты векторов, образующих сторону, и центр
@@ -70,6 +68,7 @@ class Physics:
                 # Альтернативный способ поворота
                 # for i in self.geom.peaks:
                 #       i.x, i.y = np.dot(np.linalg.inv(self.matpov_vel), np.array([i.x, i.y], float))
+
             self.center += self.vel
         #Поворот
         for i in self.geom.peaks:
@@ -94,15 +93,14 @@ class Physics:
     def is_collision(self,other):
         if self.GJK(other):
             collision_pointers=self.GJK(other)
-            #Тесты
             col=[]
 
             colliding_obj = self
             clash_obj=other
             collision_peaks = collision_pointers[1]
 
-                #Теперь мы проходим составляем из точек стороны фигуры, чтобы понять, с какой именно стороной произошло пересечение.
-                #У нас будет три варианта для сторон
+            #Теперь мы проходим составляем из точек стороны фигуры, чтобы понять, с какой именно стороной произошло пересечение.
+            #У нас будет три варианта для сторон
 
             for i in range(3):#Так как у нас всегда функция возвращает 3 точки
                     # Создаём сторону и проверяем, что найденная сторона действительно является частью фигуры
@@ -126,7 +124,7 @@ class Physics:
                         collision_perp = colisiion_Side.perp_outside(colliding_obj.vel)
                         if collision_perp:
                             col.append(collision_perp)
-                            #return [collision_perp,-collision_perp]
+
             min=100000000000000
             perp=[]
             if len(col)==2:
@@ -138,18 +136,53 @@ class Physics:
             else:
                 if len(col)==1:
                     return [col[0],-col[0]]
-                # Может получиться так, что объект догонит змею, т.е. змея отразилась, но так как объект крутиться
-                # , то в следующем кадре он догонит змею и тогда происходит непонятное поведение
                 else:
-                    # Небольшие костыли, фигура при таком варианте просто начнёт вращаться и ехать в другую сторону
-                    if clash_obj.vel.x==0 and clash_obj.vel.y==0:
-                        clash_obj.triangle_geom=-clash_obj.triangle_geom
-                    else:
-                        clash_obj.vel=-clash_obj.vel
-                        clash_obj.triangle_vel = -clash_obj.triangle_vel
-                    # clash_obj.tick()
-                    return False
+                    # Возможно наши объекты просто зацепились, а возможно симплекс посчитан неверно,
+                    # значит начинаем считать честно
+                    return self.full_collision(other)
         return False
+
+    def full_collision(self,other):
+        col = []
+
+        colliding_obj = self
+        clash_obj = other
+
+        global_points_sides=clash_obj.geom.give_gl_peaks(clash_obj.center)
+        for i in range(len(global_points_sides)):
+            colisiion_Side = Side([global_points_sides[i], global_points_sides[(i + 1) % len(global_points_sides)]],clash_obj.center)
+
+            # Проверяем пересечение
+            if colliding_obj.GJK(colisiion_Side):
+                collision_perp = colisiion_Side.perp_outside(colliding_obj.vel)
+                if collision_perp:
+                    col.append(collision_perp)
+
+        min = 100000000000000
+        perp = []
+        if len(col) >= 2:
+            for i in col:
+                if colliding_obj.center.ro(i) < min:
+                    min = colliding_obj.center.ro(i)
+                    perp = [i, -i]
+            return perp
+        else:
+            if len(col) == 1:
+                return [col[0], -col[0]]
+            else:
+                # Может получиться так, что объект догонит змею, т.е. змея отразилась, но так как объект крутиться
+                # , то в следующем кадре он догонит змею и тогда происходит непонятное поведение, так что сделаем данный костыль
+                if clash_obj.vel.x == 0 and clash_obj.vel.y == 0:
+                    clash_obj.triangle_geom = -clash_obj.triangle_geom
+                else:
+                    clash_obj.vel = -clash_obj.vel
+                    clash_obj.triangle_vel = -clash_obj.triangle_vel
+                return False
+
+
+
+
+
 
     def support(self, B, direction: Point):
         return self.find_furthest_point(direction) - B.find_furthest_point(-direction)#-r
@@ -190,18 +223,18 @@ class Physics:
                 np.arccos((clash_norm * self.vel) / (self.vel.abs()))) - 90  # угол в градусах
 
         d=np.sqrt(2*(self.vel.abs()**2)*(1-np.cos(np.radians(2*a))))
-        clash_norm=Point(clash_norm.x*d,clash_norm.y*d)
+        clash_norm=clash_norm*d
         self.vel=self.vel+clash_norm
 
 
 
 
-class Physics_circle(Physics):
+class Physics_regular_polygon(Physics):
     def __init__(self,center:Point,R,k_partitions,color,triangle_geom,velocity,triangle_vel):
-        super().__init__(center,Geometry_circle(R,k_partitions,color),triangle_geom,velocity,triangle_vel)
+        super().__init__(center,Geometry_regular_polygon(R,k_partitions,color),triangle_geom,velocity,triangle_vel)
 
     def copy(self):
-        return Physics_circle(self.center.copy(),self.geom.R,self.geom.k_partitions, self.geom.color,self.triangle_geom,self.vel.copy(),self.triangle_vel)
+        return Physics_regular_polygon(self.center.copy(),self.geom.R,self.geom.k_partitions, self.geom.color,self.triangle_geom,self.vel.copy(),self.triangle_vel)
 
 class Physics_polygon(Physics):
     def __init__(self,center:Point,peaks,color,triangle_geom,velocity,triangle_vel):

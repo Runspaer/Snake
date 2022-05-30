@@ -11,7 +11,7 @@ class Map:
         for i in range(len(self.controls)):
             if type(self.controls[i])==Snake_Control1:
                 for j in range(len(self.controls)):
-                    if self.controls[j]!=self.controls[i]:
+                    if self.controls[j]!=self.controls[i] and type(self.controls[j])!=Snake_Control1:
                         cl=self.controls[i].is_collision(self.controls[j])#столкнувшиеся объекты и нормаль для первого объекта и для второго
                         if cl:
                             first_collision_obj,second_collision_obj,first_perp,second_perp=cl

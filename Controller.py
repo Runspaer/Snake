@@ -2,7 +2,6 @@ from Visual.UI import *
 from Engine import *
 from Visual.include_me import *
 
-
 class Controller:
     def __init__(self):
         objs,screen_size = include_objs()
@@ -19,3 +18,4 @@ class Controller:
             else:
                 self.engine.tick()
                 self.ui.draw(self.engine.map.controls)
+

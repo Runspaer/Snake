@@ -31,7 +31,7 @@ class Geometry_polygon(Geometry):
         return Geometry_polygon(cop,self.color)
 
 
-class Geometry_circle(Geometry_polygon):
+class Geometry_regular_polygon(Geometry_polygon):
     def __init__(self,R,k_partitions,color):
         self.R=R
         self.k_partitions=k_partitions
@@ -45,4 +45,4 @@ class Geometry_circle(Geometry_polygon):
         cop = []
         for i in self.peaks:
             cop.append(i.copy())
-        return Geometry_circle(self.R,self.k_partitions,self.color)
+        return Geometry_regular_polygon(self.R,self.k_partitions,self.color)

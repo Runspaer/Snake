@@ -32,12 +32,6 @@ class Snake(Obj):
         render_score = font_score.render(f'Score: {len(self.tail)//2}',1,self.phys.geom.color)
         screen.blit(render_score,(self.score_point.x,self.score_point.y))
 
-    def is_collision(self,other):
-        clash_perp=self.phys.is_collision(other.phys)
-        if clash_perp:
-            return clash_perp
-        return False
-
     def eat(self):
         #Сразу содаём 2 цвета, которые мы поместим в наши новые хвосты
         color=[]
@@ -54,7 +48,7 @@ class Snake(Obj):
             cop.triangle_vel=0
             cop.center-=self.phys.vel
             cop.geom.color=color[0]
-            self.tail.append(Tail(cop))##Интересная проблема с указателями в питоне, нужно будет рассказать
+            self.tail.append(Tail(cop))
 
         else:
             # Яблоки поворота
@@ -72,29 +66,15 @@ class Snake(Obj):
         cop.center-=self.tail[-1].phys.vel
         cop.geom.color = color[1]
         self.tail.append(Tail(cop))
-        #Прикол
-        # for i in range(10):
-        #     cop = self.tail[-1].phys.copy()
-        #     cop.matpov_vel = np.array([[1, 0], [0, 1]], float)
-        #     cop.center -= self.tail[-1].phys.vel
-        #     self.tail.append(Tail(cop))
 
     def rebound(self,clash_norm):
         self.phys.rebound(clash_norm)
 
-        # self.tick_no_turn()
-        # for i in range(1, len(self.tail)):
-        #     self.tail[-i].tick_no_turn()  # Использует стандартный tick из Obj
-        #     self.tail[-i].phys.vel = self.tail[-i - 1].phys.vel.copy()  # Помни про указатели
-        # if self.tail:
-        #     self.tail[0].tick_no_turn()  # Использует стандартный tick из Obj
-        #     self.tail[0].phys.vel = self.phys.vel.copy()  # Помни про указатели
 
     def react_on_clash(self,other,clash_norm):
         if type(other)==Apple:
             # Яблоки поворота
             #self.phys.triangle_geom += 1
-
             self.eat()
         if type(other)==Wall:
             self.rebound(clash_norm)

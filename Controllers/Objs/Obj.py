@@ -1,7 +1,4 @@
-from random import randrange
 from Controllers.Objs.Physics import *
-#Тесты
-import time
 
 class Obj:
     def __init__(self,phys:Physics):
@@ -17,6 +14,11 @@ class Obj:
         return Obj(self.phys.copy())
     def tick_no_turn(self):
         self.phys.tick_no_turn()
+    def is_collision(self,other):
+        clash_perp=self.phys.is_collision(other.phys)
+        if clash_perp:
+            return clash_perp
+        return False
 
 class Tail(Obj):
     def copy(self):
@@ -25,11 +27,9 @@ class Tail(Obj):
 class Wall(Obj):
     def __init__(self,phys:Physics):
         super().__init__(phys)
-        #self.sight=sight#Обозначает сдвиг изображения
     def react_on_clash(self,other,clash_norm):
         pass
-        # if self.phys.vel.x and
-        # self.phys.rebound(clash_norm)
+
 
 class Apple(Obj):
     def copy(self):
