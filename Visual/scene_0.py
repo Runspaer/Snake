@@ -15,7 +15,7 @@ def include_objs():
     Russia=[(240, 255, 255),(0, 82, 255),(255, 9, 47)]
     color_Russia=[]
     for j in Russia:
-        for i in range(5):
+        for i in range(10):
             color_Russia.append(j)
 
     #Bee
@@ -42,7 +42,7 @@ def include_objs():
     #     # mass.append(Apples_Control([Apple(Physics_regular_polygon(Point(50, 50), 30, 16, 'red', 0, Point(0, 0), 0)),
     #     #                             Apple(Physics_regular_polygon(Point(50, 50), 30, 16, 'red', 0, Point(0, 0), 0))]))
     #
-    mass.append(Apples_Control([Apple(Physics_regular_polygon(Point(50,50),10,3,'red',0,Point(0,0),0)),Apple(Physics_regular_polygon(Point(100,100),30,16,'red',0,Point(0,0),0))]))
+    # mass.append(Apples_Control([Apple(Physics_regular_polygon(Point(50,50),10,3,'red',0,Point(0,0),0)),Apple(Physics_regular_polygon(Point(100,100),30,16,'red',0,Point(0,0),0))]))
     # mass.append(Apples_Control(Apple(Physics_polygon(Point(50,50), [Point(-10,10),Point(10,10),Point(10,-10),Point(-10,-10)],'red',0,Point(0,0),0))))
 
 
@@ -107,12 +107,34 @@ def include_objs():
     #                                                  , (0, 255, 0), 1, Point(2, 0), 1),
     #                                   Point(420, 5), color), Buttons(pygame.K_v, pygame.K_b)))
 
+    #full cat
+    # cat = [Point(1, 1), Point(4, 1), Point(4, 3), Point(3, 3), Point(3, 4), Point(5, 4), Point(5, -4),
+    #        Point(4, -4), Point(4, -2), Point(3, -2), Point(3, -4), Point(2, -4), Point(2, -1), Point(0, -1),
+    #        Point(0, -4), Point(-1, -4), Point(-1, -2), Point(-2, -2), Point(-2, -4), Point(-3, -4), Point(-3, 0)
+    #     , Point(-5, 1), Point(-5, 3), Point(-4, 4), Point(-3, 3), Point(-1, 3), Point(0, 4), Point(1, 3)]
+    # for i in range(len(cat)):
+    #     cat[i] = cat[i] * -10
+
+    # mass.append(Snake_Control1(Snake(Physics_polygon(Point(100, 100), cat
+    #                                                   , (0, 255, 0), 1, Point(6, 0), 1),
+    #                                   Point(550, 5), color_Russia),
+    #                            Buttons(pygame.K_v, pygame.K_b)))
+
+    # mat=[0]*len(cat)
+    # for i in range (len(cat)):
+    #     mat[i]=cat[i].copy()
+    # mass.append(Snake_Control1([Snake(Physics_polygon(Point(100, 100), cat.copy()
+    #                                                  , (0, 255, 0), 1, Point(6,0), 1),
+    #                                  Point(550, 5),color_Russia),Snake(Physics_polygon(Point(100, 100), mat
+    #                                                  , (0, 255, 0), 0, Point(6,0), 1),
+    #                                  Point(550, 5),color_Russia)], Buttons(pygame.K_v, pygame.K_b)))
+
 
 
     #star snake и star wall
     # star=[Point(0, 4), Point(0, -4), Point(0, 0),Point(4, 0),Point(-4, 0), Point(0, 0)]
     # for i in range(len(star)):
-    #     star[i]=star[i]*-8
+    #     star[i]=star[i]*-6
     # mass.append((Walls_Control(Wall(Physics_polygon(Point(100,100),star,(0, 255, 0), 0, Point(0, 0), 0)))))
     # mass.append(Snake_Control1(Snake(Physics_polygon(Point(100,100),star
     #                                                  , (0, 255, 0), 1, Point(1, 0), 1),
@@ -120,8 +142,8 @@ def include_objs():
 
 
 
-    #Круглая Змея
-    mass.append(Snake_Control1(Snake(Physics_regular_polygon(Point(screen_size[0]//2,screen_size[1]//2),20,16,'red',3,Point(6,0),2),Point(5,5),color),Buttons(pygame.K_LEFT,pygame.K_RIGHT)))
+    # Круглая Змея
+    # mass.append(Snake_Control1(Snake(Physics_regular_polygon(Point(screen_size[0]//2,screen_size[1]//2),20,16,'red',3,Point(6,0),2),Point(5,5),color),Buttons(pygame.K_LEFT,pygame.K_RIGHT)))
 
 
 
@@ -154,6 +176,25 @@ def include_objs():
     # # #
     # mass.append(Snake.Snake(Point(screen_size[0]//2,screen_size[1]//2),Point(2,0),'green',15,[]))
     # mass.append(Apple.Apple(Point(50,50),Point(0,0),'red',10))
+
+    fig_1=[Point(3,-5),Point(5,-3),Point(5,-1),Point(1,3),Point(0,2),Point(-2,1),Point(0,-1),Point(1,-3)]
+    for i in range(len(fig_1)):
+        fig_1[i] = fig_1[i] * 8
+    mass.append(Snake_Control1(Snake(Physics_polygon(Point(100, 100), fig_1
+                                                     , 'orange',0.5, Point(1.5, 0), 1),
+                                      Point(screen_size[0]-80, 5),['orange']), Buttons(pygame.K_LEFT, pygame.K_RIGHT)))
+
+    fig_2 = [Point(1,-4),Point(2,-2),Point(-1,1),Point(-1,-2),Point(-4,-1.5)]
+    for i in range(len(fig_2)):
+        fig_2[i] = fig_2[i] * 10
+    mass.append(Snake_Control1(Snake(Physics_polygon(Point(100, 100), fig_2
+                                                     , 'red', 0.5, Point(1.5, 0), 1),
+                                     Point(5, 5), ['red']), Buttons(pygame.K_a, pygame.K_d)))
+
+
+
+
+
     weight=150
     mass.append(Walls_Control([Wall(Physics_polygon(Point(-weight, screen_size[1] / 2),
                                                     [Point(weight, screen_size[1] / 2), Point(weight, -screen_size[1] / 2), Point(-weight, -screen_size[1] / 2),Point(-weight, screen_size[1] / 2)],
@@ -167,6 +208,6 @@ def include_objs():
                                                     Point(-screen_size[0] / 2, -weight-1), Point(-screen_size[0] / 2, weight)],
                                                    'blue', 0, Point(0, 0), 0))]))#Все игровые стены
 
-    # mass.append(Apples_Control([],'apples_scene_0.csv'))
+    mass.append(Apples_Control([],'apples_scene_0.csv'))
     mass.append(Walls_Control([],'walls_scene_0.csv'))
     return [mass,screen_size]

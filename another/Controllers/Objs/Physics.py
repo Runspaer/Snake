@@ -1,5 +1,5 @@
-from Controllers.Objs.Geometry import *
-from Controllers.Objs.Plane.Simplex import *
+from another.Controllers.Objs.Geometry import *
+from another.Controllers.Objs.Plane.Simplex import *
 import numpy as np
 
 class Side:
@@ -56,20 +56,13 @@ class Physics:
             self.center += self.vel
         else:
             keys = pygame.key.get_pressed()
-            if keys[buttons.left]:
-                self.vel.x, self.vel.y = np.dot(matpov_vel, np.array([self.vel.x, self.vel.y], float))
+            if keys[buttons.up]:
+                self.center += self.vel
 
-                # Альтернативный способ поворота
-                # for i in self.geom.peaks:
-                #     i.x, i.y = np.dot(self.matpov_vel, np.array([i.x, i.y], float))
-            if keys[buttons.right]:
-                self.vel.x, self.vel.y = np.dot(np.linalg.inv(matpov_vel), np.array([self.vel.x, self.vel.y], float))# пока взял обратную, думаю, что не будет сильно бить по эффективности
+            if keys[buttons.down]:
+                self.center -= self.vel
 
-                # Альтернативный способ поворота
-                # for i in self.geom.peaks:
-                #       i.x, i.y = np.dot(np.linalg.inv(self.matpov_vel), np.array([i.x, i.y], float))
 
-            self.center += self.vel
         #Поворот
         for i in self.geom.peaks:
             i.x, i.y = np.dot(matpov_geom, np.array([i.x, i.y], float))
@@ -80,15 +73,11 @@ class Physics:
     def find_furthest_point(self, direction: Point):
         pointers = self.geom.give_gl_peaks(self.center)
         max_point = Point(0, 0)
-        max_r = None
+        max_r = -10000000000000000000
         for i in pointers:
-            if max_r==None:
-                max_r=i * direction
+            if i * direction > max_r:
+                max_r = i * direction
                 max_point = i
-            else:
-                if i * direction > max_r:
-                    max_r = i * direction
-                    max_point = i
         return max_point
 
     def is_collision(self,other):
@@ -126,17 +115,13 @@ class Physics:
                         if collision_perp:
                             col.append(collision_perp)
 
-            min=None
+            min=100000000000000
             perp=[]
             if len(col)==2:
                 for i in col:
-                    if min==None:
+                    if colliding_obj.center.ro(i)<min:
                         min=colliding_obj.center.ro(i)
-                        perp = [i, -i]
-                    else:
-                        if colliding_obj.center.ro(i)<min:
-                            min=colliding_obj.center.ro(i)
-                            perp=[i,-i]
+                        perp=[i,-i]
                 return perp
             else:
                 if len(col)==1:
@@ -163,29 +148,18 @@ class Physics:
                 if collision_perp:
                     col.append(collision_perp)
 
-        min = None
+        min = 100000000000000
         perp = []
-        if len(col) == 2:
+        if len(col) >= 2:
             for i in col:
-                if min == None:
+                if colliding_obj.center.ro(i) < min:
                     min = colliding_obj.center.ro(i)
                     perp = [i, -i]
-                else:
-                    if colliding_obj.center.ro(i) < min:
-                        min = colliding_obj.center.ro(i)
-                        perp = [i, -i]
             return perp
         else:
             if len(col) == 1:
                 return [col[0], -col[0]]
             else:
-                # Может получиться так, что объект догонит змею, т.е. змея отразилась, но так как объект крутиться
-                # , то в следующем кадре он догонит змею и тогда происходит непонятное поведение, так что сделаем данный костыль
-                if clash_obj.vel.x == 0 and clash_obj.vel.y == 0:
-                    clash_obj.triangle_geom = -clash_obj.triangle_geom
-                else:
-                    clash_obj.vel = -clash_obj.vel
-                    clash_obj.triangle_vel = -clash_obj.triangle_vel
                 return False
 
 

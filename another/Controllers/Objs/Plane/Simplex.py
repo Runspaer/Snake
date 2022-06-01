@@ -1,4 +1,4 @@
-from Controllers.Objs.Plane.Point import Point
+from another.Controllers.Objs.Plane.Point import Point
 class Simplex:
     def __init__(self, simplex:list,collision_pointers_first:list,collision_pointers_second:list):
         self.simplex=simplex
@@ -20,8 +20,8 @@ class Simplex:
             if abPerp * c >= 0:
                 abPerp = -abPerp
 
-            # Если начало координат лежит за пределами симплекса, т.е. в направлении перпендикуляра
-            # удаляем точку и определяем новое направление в направлении перпендикуляра
+            #Если начало координат лежит за пределами симплекса, т.е. в направлении перпендкуляра
+            #удаляем точку и определяем новое направление в направлении перпендикуляра
             if abPerp * ao > 0:
                 self.simplex.pop(0)
                 self.collision_pointers_first.pop(0)
@@ -34,7 +34,7 @@ class Simplex:
             if acPerp * b >= 0:
                 acPerp =-acPerp
 
-            # Если начало координат лежит за пределами симплекса, т.е. в направлении перпендикуляра
+            # Если начало координат лежит за пределами симплекса, т.е. в направлении перпендкуляра
             # удаляем точку и определяем новое направление в направлении перпендикуляра
             if acPerp * ao > 0:
                 self.simplex.pop(1)

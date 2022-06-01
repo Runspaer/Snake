@@ -1,19 +1,16 @@
 import csv
-
-from Controllers.Objs.Obj import *
+from random import randint
+from another.Controllers.Objs.Obj import *
 from random import randrange
 
 class Control:
-    def __init__(self,objs,polygon_csv=None,regular_csv=None):
+    def __init__(self,objs,regular_csv=None):
         if type(objs)==list:
             self.objs=objs
         else:
             self.objs = [objs]
-        if polygon_csv!=None:
-            self.read_polygon_csv(polygon_csv)
-
         if regular_csv!=None:
-            self.read_regular_csv(regular_csv)
+            self.read_csv(regular_csv)
 
     def tick(self):
         for i in self.objs:
@@ -21,12 +18,8 @@ class Control:
     def draw(self,screen):
         for i in self.objs:
             i.draw(screen)
-    def read_polygon_csv(self,name_polygon_csv):
+    def read_csv(self,name_regular_csv):
         pass
-
-    def read_regular_csv(self,name_regular_polygon):
-        pass
-
     def is_collision(self, other):
         for i in self.objs:
             for j in other.objs:
@@ -48,8 +41,8 @@ class Apples_Control(Control):
         apple.phys.center=Point(randrange(int(max_x)+5, screen_size[0]-(int(max_x)+5), 20),randrange(int(max_y)+5, screen_size[1]-(int(max_y)+5), 20))
         return apple
 
-    def read_polygon_csv(self,polygon_csv):
-        with open(polygon_csv, 'r') as f:
+    def read_csv(self,regular_csv):
+        with open(regular_csv, 'r') as f:
             include_obj = csv.reader(f, delimiter=';')
             next(include_obj)
             for i in include_obj:
@@ -66,8 +59,12 @@ class Apples_Control(Control):
 
 
 class Walls_Control(Control):
-    def read_polygon_csv(self, polygon_csv):
-        with open(polygon_csv, 'r') as f:
+    def __init__(self,objs,buttons=None,regular_csv=None):
+        super().__init__(objs,regular_csv)
+        self.buttons=buttons
+
+    def read_csv(self, regular_csv):
+        with open(regular_csv, 'r') as f:
             include_obj = csv.reader(f, delimiter=';')
             next(include_obj)
             for i in include_obj:
@@ -80,17 +77,35 @@ class Walls_Control(Control):
 
                 color, triangle_geom, velocity, triangle_vel = i[3], float(i[4]), Point(float(i[5]),float(i[6])), float(i[7])
                 self.objs.append(Wall(Physics_polygon(center, peaks, color, triangle_geom, velocity, triangle_vel)))
-
-
-class Snake_Control1(Control):
-    def __init__(self,objs,buttons):#objs, но там только одна змея
-        super().__init__(objs)
-        self.buttons=buttons
     def tick(self):
         for i in self.objs:
             i.tick(self.buttons)
 
+
+class Snake_Control1(Control):
+
+    def tick(self):
+        # Пусть у нас есть информация про размер экрана, но мы не хотим её передавать
+        for i in self.objs:
+            i.tick()
+            screen_size = [1280, 960]
+            if i.phys.center.x<0:
+                i.right_points+=1
+                i.phys.center = Point(screen_size[0] // 2, screen_size[1] // 2)
+
+                speed = Point(randint(-200, 200), randint(-100, 100))
+                speed = speed * (1 / speed.abs()) * 3
+                i.phys.vel=speed
+            if i.phys.center.x>screen_size[0]:
+                i.left_points+=1
+                i.phys.center = Point(screen_size[0] // 2, screen_size[1] // 2)
+
+                speed = Point(randint(-200, 200), randint(-100, 100))
+                speed = speed * (1 / speed.abs()) * 3
+                i.phys.vel = speed
+
+
 class Buttons:
-    def __init__(self,left,right):
-        self.left=left
-        self.right=right
+    def __init__(self,up,down):
+        self.up=up
+        self.down=down

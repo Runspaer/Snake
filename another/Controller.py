@@ -1,6 +1,6 @@
-from Visual.UI import *
+from another.Visual.UI import *
 from Engine import *
-from Visual.scene_1_a import *
+from another.Visual.include_me import *
 
 class Controller:
     def __init__(self):
@@ -18,3 +18,4 @@ class Controller:
             else:
                 self.engine.tick()
                 self.ui.draw(self.engine.map.controls)
+
